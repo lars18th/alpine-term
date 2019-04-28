@@ -1,0 +1,12 @@
+diff -uNr qemu-4.0.0/ui/keymaps.c qemu-4.0.0.mod/ui/keymaps.c
+--- qemu-4.0.0/ui/keymaps.c	2019-04-23 21:14:46.000000000 +0300
++++ qemu-4.0.0.mod/ui/keymaps.c	2019-11-26 17:25:59.460883626 +0200
+@@ -205,7 +205,7 @@
+     keysym2code = g_hash_table_lookup(k->hash, GINT_TO_POINTER(keysym));
+     if (!keysym2code) {
+         trace_keymap_unmapped(keysym);
+-        warn_report("no scancode found for keysym %d", keysym);
++        //warn_report("no scancode found for keysym %d", keysym);
+         return 0;
+     }
+ 

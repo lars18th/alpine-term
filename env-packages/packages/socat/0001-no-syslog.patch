@@ -1,0 +1,14 @@
+diff -uNr socat-1.7.3.3/error.c socat-1.7.3.3.mod/error.c
+--- socat-1.7.3.3/error.c	2019-04-04 11:59:55.000000000 +0300
++++ socat-1.7.3.3.mod/error.c	2019-11-19 18:39:44.417365754 +0200
+@@ -366,10 +366,6 @@
+ 
+ 
+ static void _msg(int level, const char *buff, const char *syslp) {
+-   if (diagopts.syslog) {
+-      /* prevent format string attacks (thanks to CoKi) */
+-      syslog(syslevel[level], "%s", syslp);
+-   }
+    if (diagopts.logfile) {
+       fputs(buff, diagopts.logfile); fflush(diagopts.logfile);
+    }

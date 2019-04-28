@@ -1,0 +1,89 @@
+/*
+*************************************************************************
+Alpine Term - a VM-based terminal emulator.
+Copyright (C) 2019  Leonid Plyushch <leonid.plyushch@gmail.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*************************************************************************
+*/
+package alpine.term;
+
+import android.content.Context;
+import android.os.Build;
+
+/**
+ * Application build-time configuration entries.
+ */
+@SuppressWarnings("WeakerAccess")
+public class Config {
+    /**
+     * Name of CD-ROM image file.
+     * Must be a name of file located in assets directory.
+     */
+    public static final String CDROM_IMAGE_NAME = "alpine-linux-cdrom.iso";
+
+    /**
+     * Name of HDD image file.
+     * Must be a name of file located in assets directory.
+     */
+    public static final String HDD_IMAGE_NAME = "alpine-linux-hdd.qcow2";
+
+    /**
+     * Name of zip archive with QEMU firmware & keymap files.
+     * Must be a name of file located in assets directory.
+     */
+    public static final String QEMU_DATA_PACKAGE = "qemu-data.bin";
+
+    /**
+     * Upstream DNS server used by QEMU DNS resolver.
+     */
+    public static final String QEMU_UPSTREAM_DNS = "8.8.8.8";
+
+    /**
+     * A tag used for logging.
+     */
+    public static final String LOG_TAG = "alpine-term:app";
+
+    /**
+     * Returns path to runtime environment directory.
+     */
+    public static String getDataDirectory(final Context context) {
+        return context.getFilesDir().getAbsolutePath() + "/run";
+    }
+
+    /**
+     * Returns path to directory where temporary files can be placed.
+     */
+    public static String getTemporaryDirectory(final Context context) {
+        return context.getCacheDir().getAbsolutePath();
+    }
+
+    /**
+     * Returns true if CPU architecture is supported, otherwise false.
+     */
+    public static boolean isDeviceSupported() {
+        for (String androidArch : Build.SUPPORTED_ABIS) {
+            switch (androidArch) {
+                case "arm64-v8a":
+                case "x86_64":
+                case "x86":
+                    return true;
+                default:
+                    break;
+            }
+        }
+
+        return false;
+    }
+}

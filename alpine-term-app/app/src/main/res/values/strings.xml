@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="application_name">Alpine Term</string>
+
+    <!-- Common -->
+    <string name="cancel_label">Cancel</string>
+    <string name="exit_label">Exit</string>
+    <string name="ok_label">OK</string>
+
+    <!-- Unsupported device dialog -->
+    <string name="dialog_unsupported_device_title">Unsupported device</string>
+    <string name="dialog_unsupported_device_desc">There is a known issue with QEMU on some devices. You may observe freezes, crashes and other incorrect behaviour.</string>
+
+    <!-- Installer dialog -->
+    <string name="installer_progress_message">Installing runtime data…</string>
+    <string name="installer_error_title">Installation failed</string>
+    <string name="installer_error_body">Application was unable to install the runtime data.</string>
+    <string name="installer_error_try_again_button">Try again</string>
+
+    <!-- Context menu: main -->
+    <string name="menu_copy_text">Copy</string>
+    <string name="menu_paste_text">Paste</string>
+    <string name="menu_more">More…</string>
+
+    <!-- Context menu: more -->
+    <string name="menu_show_help">Show help</string>
+    <string name="menu_select_url">Select URL</string>
+    <string name="menu_share_transcript">Share transcript</string>
+    <string name="menu_reset_terminal">Reset</string>
+    <string name="menu_console_style">Styling: change font and colors</string>
+    <string name="menu_toggle_back_is_escape">Remap key \&quot;back\&quot; to \&quot;escape\&quot;</string>
+    <string name="menu_toggle_ignore_bell">Ignore bell character</string>
+
+    <!-- Context menu: Select URL dialog -->
+    <string name="select_url_dialog_title">Click URL to copy or long press to open:</string>
+    <string name="select_url_toast_no_found">No URLs found in the terminal.</string>
+    <string name="select_url_toast_copied_to_clipboard">URL was copied to clipboard.</string>
+    <string name="select_url_toast_cannot_open">Cannot open this URL.</string>
+
+    <!-- Context menu: Share transcript prompt -->
+    <string name="share_transcript_file_name">alpine-term_transcript.txt</string>
+    <string name="share_transcript_chooser_title">Send console transcript to:</string>
+
+    <!-- Context menu: Reset terminal toast message -->
+    <string name="reset_toast_notification">Resetting terminal state…</string>
+
+    <!-- Context menu: Fonts and Colors -->
+    <string name="style_color_prompt">Choose color</string>
+    <string name="style_font_prompt">Choose font</string>
+    <string name="style_toast_install_failed">Failed to update terminal style.</string>
+
+    <!-- Drawer -->
+    <string name="button_toggle_soft_keyboard">Toggle keyboard</string>
+
+    <!-- Notification -->
+    <string name="notification_action_wake_lock">Acquire wakelock</string>
+    <string name="notification_action_wake_unlock">Release wakelock</string>
+</resources>
