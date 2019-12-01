@@ -9,7 +9,7 @@ distribution.
 
 <p align="center"><img src="help-page/img/demo_anim.gif" width="60%"></p>
 
-**Disclamier**: by installing this software, you are agreeing to use it
+**Disclaimer**: by installing this software, you are agreeing to use it
 on your own risk. Alpine Term comes with disk image file containing the
 software developed by third-parties. [Author](https://github.com/xeffyr)
 is not responsible for any damage that may affect your device or data.
