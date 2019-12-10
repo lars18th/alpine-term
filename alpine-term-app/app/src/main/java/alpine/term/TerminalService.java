@@ -325,7 +325,7 @@ public final class TerminalService extends Service implements SessionChangedCall
         processArgs.addAll(Arrays.asList("-parallel", "none"));
 
         // Monitor console.
-        processArgs.addAll(Arrays.asList("-chardev", "tty,id=monitor0,mux=off,path=/proc/self/fd/0"));
+        processArgs.addAll(Arrays.asList("-chardev", "tty,id=monitor0,mux=off,path=/dev/tty"));
         processArgs.addAll(Arrays.asList("-monitor", "chardev:monitor0"));
 
         // 4 serial consoles.
@@ -361,7 +361,7 @@ public final class TerminalService extends Service implements SessionChangedCall
         environment.add("PATH=" + execPath);
         environment.add("TMPDIR=" + Config.getTemporaryDirectory(appContext));
 
-        String[] processArgs = {execPath + "/libsocat.so", "/proc/self/fd/0,rawer", "UNIX-CONNECT:" + runtimeDataPath + "/.qemu" + sessionNumber + ",interval=0.1,forever"};
+        String[] processArgs = {execPath + "/libsocat.so", "/dev/tty,rawer", "UNIX-CONNECT:" + runtimeDataPath + "/.qemu" + sessionNumber + ",interval=0.1,forever"};
         TerminalSession session = new TerminalSession(execPath + "/libsocat.so", processArgs, environment.toArray(new String[0]), runtimeDataPath, this);
         mTerminalSessions.add(session);
         updateNotification();
