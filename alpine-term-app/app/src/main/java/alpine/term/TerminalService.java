@@ -264,19 +264,33 @@ public final class TerminalService extends Service implements SessionChangedCall
         if (am != null) {
             am.getMemoryInfo(memInfo);
 
-            if (memInfo.totalMem > (10240L * 1048576L)) {
-                processArgs.addAll(Arrays.asList("-m", "6144M", "-tb-size", "256"));
-            } else if (memInfo.totalMem > (7168L * 1048576L)) {
-                processArgs.addAll(Arrays.asList("-m", "4096M", "-tb-size", "256"));
-            } else if (memInfo.totalMem > (3000L * 1048576L)) {
-                processArgs.addAll(Arrays.asList("-m", "1024M", "-tb-size", "128"));
-            } else if (memInfo.totalMem > (1500L * 1048576L)) {
-                processArgs.addAll(Arrays.asList("-m", "512M", "-tb-size", "64"));
+            // Total memory is actually lower than RAM chip's value. So in case of
+            // the 8 GB RAM, the visible value will be about 7500 - 7900 MB. But
+            // we use 7200 to cover rare cases.
+            if (memInfo.totalMem > (7200L * 1048576L)) {
+                // Device has 8 GB or more, but we assume that only 4 GB allocation
+                // is safe.
+                processArgs.addAll(Arrays.asList("-m", "4096M", "-tb-size", "512"));
+            } else if (memInfo.totalMem > (4200 * 1048576L)) {
+                // Device with 6 GB of RAM.
+                processArgs.addAll(Arrays.asList("-m", "2048M", "-tb-size", "256"));
+            } else if (memInfo.totalMem > (3200 * 1048576L)) {
+                // Device with 4 GB of RAM.
+                processArgs.addAll(Arrays.asList("-m", "1024M", "-tb-size", "256"));
+            } else if (memInfo.totalMem > (1200 * 1048576L)) {
+                // Device has 2-3 GB of RAM
+                processArgs.addAll(Arrays.asList("-m", "512M", "-tb-size", "128"));
+            } else if (memInfo.totalMem > (800 * 1048576L)) {
+                // Device has 1 GB of RAM.
+                processArgs.addAll(Arrays.asList("-m", "256M", "-tb-size", "64"));
             } else {
-                processArgs.addAll(Arrays.asList("-m", "256M", "-tb-size", "32"));
+                // Other cases, e.g. device with 512 MB of RAM.
+                processArgs.addAll(Arrays.asList("-m", "128M", "-tb-size", "32"));
             }
         } else {
-            processArgs.addAll(Arrays.asList("-m", "256M", "-tb-size", "32"));
+            // If cannot detect host RAM size, attempt to use the minimal safe
+            // value that will at least allow VM to boot.
+            processArgs.addAll(Arrays.asList("-m", "128M", "-tb-size", "32"));
         }
 
         // Do not create default devices.
