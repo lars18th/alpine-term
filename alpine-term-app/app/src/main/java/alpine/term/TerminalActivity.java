@@ -668,12 +668,6 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         TerminalActivity.currentFontSize += (increase ? 1 : -1) * 2;
         TerminalActivity.currentFontSize = Math.max(MIN_FONTSIZE, Math.min(TerminalActivity.currentFontSize, MAX_FONTSIZE));
         mTerminalView.setTextSize(TerminalActivity.currentFontSize);
-
-        TerminalSession currentSession = mTerminalView.getCurrentSession();
-
-        if (currentSession != null) {
-            currentSession.reset(false);
-        }
     }
 
     /**
