@@ -186,7 +186,7 @@ public final class ExtraKeysView extends GridLayout {
                         case "ALT":
                             ToggleButton self = (ToggleButton) finalButton;
                             self.setChecked(self.isChecked());
-                            self.setTextColor(self.isChecked() ? 0xFF80DEEA : TEXT_COLOR);
+                            self.setTextColor(self.isChecked() ? 0xFF00CC66 : TEXT_COLOR);
                             break;
                         default:
                             sendKey(root, buttonText);
