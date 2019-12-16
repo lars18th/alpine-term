@@ -341,7 +341,7 @@ public final class TerminalService extends Service implements SessionChangedCall
         processArgs.addAll(Arrays.asList("-parallel", "none"));
 
         // Monitor console.
-        processArgs.addAll(Arrays.asList("-chardev", "tty,id=monitor0,mux=off,path=/dev/tty"));
+        processArgs.addAll(Arrays.asList("-chardev", "stdio,id=monitor0,mux=off,signal=off"));
         processArgs.addAll(Arrays.asList("-monitor", "chardev:monitor0"));
 
         // 4 serial consoles.
