@@ -370,7 +370,7 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
                 return true;
             case CONTEXTMENU_RESET_TERMINAL_ID: {
                 if (session != null) {
-                    session.reset();
+                    session.reset(true);
                     showToast(getResources().getString(R.string.reset_toast_notification), true);
                 }
                 return true;
@@ -672,7 +672,7 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         TerminalSession currentSession = mTerminalView.getCurrentSession();
 
         if (currentSession != null) {
-            currentSession.reset();
+            currentSession.reset(false);
         }
     }
 

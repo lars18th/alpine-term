@@ -299,8 +299,8 @@ public final class TerminalSession extends TerminalOutput {
     }
 
     /** Reset state for terminal emulator state. */
-    public void reset() {
-        mEmulator.reset();
+    public void reset(boolean erase) {
+        mEmulator.reset(erase);
         notifyScreenUpdate();
     }
 

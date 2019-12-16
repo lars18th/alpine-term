@@ -308,7 +308,7 @@ public final class TerminalEmulator {
         mRows = rows;
         mColumns = columns;
         mTabStop = new boolean[mColumns];
-        reset();
+        reset(false);
     }
 
     public TerminalBuffer getScreen() {
@@ -581,7 +581,7 @@ public final class TerminalEmulator {
                         break;
                     case ESC_CSI_EXCLAMATION:
                         if (b == 'p') { // Soft terminal reset (DECSTR, http://vt100.net/docs/vt510-rm/DECSTR).
-                            reset();
+                            reset(false);
                         } else {
                             unknownSequence(b);
                         }
@@ -1288,9 +1288,7 @@ public final class TerminalEmulator {
                 }
                 break;
             case 'c': // RIS - Reset to Initial State (http://vt100.net/docs/vt510-rm/RIS).
-                reset();
-                blockClear(0, 0, mColumns, mRows);
-                setCursorPosition(0, 0);
+                reset(true);
                 break;
             case 'D': // INDEX
                 doLinefeed();
@@ -2309,7 +2307,13 @@ public final class TerminalEmulator {
     }
 
     /** Reset terminal state so user can interact with it regardless of present state. */
-    public void reset() {
+    public void reset(boolean erase) {
+        if (erase) {
+            mMainBuffer.clearTranscript();
+            setCursorPosition(0, 0);
+            blockClear(0, 0, mColumns, mRows);
+        }
+
         mCursorStyle = CURSOR_STYLE_BLOCK;
         mArgIndex = 0;
         mContinueSequence = false;
@@ -2387,5 +2391,4 @@ public final class TerminalEmulator {
         return "TerminalEmulator[size=" + mScreen.mColumns + "x" + mScreen.mScreenRows + ", margins={" + mTopMargin + "," + mRightMargin + "," + mBottomMargin
             + "," + mLeftMargin + "}]";
     }
-
 }
