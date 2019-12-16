@@ -2,31 +2,37 @@
 #  docker build -t xeffyr/alpine-term-env-builder .
 # Push to docker hub with:
 #  docker push xeffyr/alpine-term-env-builder
-# This is done after changing this file or any of the
-# scripts/setup-{ubuntu,android-sdk}.sh setup scripts.
 FROM ubuntu:18.10
 
 # Fix locale to avoid warnings:
 ENV LANG C.UTF-8
 
-# Needed for setup:
-COPY ./setup-build-environment.sh /tmp/setup-build-environment.sh
-COPY ./properties.sh /tmp/properties.sh
+# Install necessary packages.
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt update && apt upgrade && \
+    apt install -yq --no-install-recommends \
+    automake bison ca-certificates curl flex g++ git gettext \
+    gperf libglib2.0-dev libtool-bin m4 pkg-config python \
+    python3.7 sudo tar texinfo unzip xmlto zip
 
-# Setup needed packages and the Android SDK and NDK:
-RUN apt-get update && \
-    apt-get -yq upgrade && \
-    apt-get install -yq sudo && \
-    adduser --disabled-password --shell /bin/bash --gecos "" builder && \
+# Setup user.
+RUN adduser --disabled-password --shell /bin/bash --gecos "" builder && \
     echo "builder ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/builder && \
     chmod 0440 /etc/sudoers.d/builder && \
-    su - builder -c /tmp/setup-build-environment.sh && \
-    # Removed unused parts to make a smaller Docker image:
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    cd /home/builder/lib/android-ndk/ && \
-    rm -Rf toolchains/mips* && \
-    rm -Rf sources/cxx-stl/gabi++ sources/cxx-stl/system sources/cxx-stl/stlport sources/cxx-stl/gnu-libstdc++
+    mkdir -p /data && chown builder:builder /data
 
-# We expect this to be mounted with '-v $PWD:/home/builder/env-packages':
+# Install NDK toolchain.
+RUN curl --fail --retry 3 -o ndk.zip https://dl.google.com/android/repository/android-ndk-r20-Linux-x86_64.zip && \
+    unzip -q ndk.zip && rm -f ndk.zip
+COPY ./toolchain /tmp/toolchain
+RUN /tmp/toolchain/create-standalone-toolchain.sh android-ndk-r20 /home/builder/ndk-llvm-x86_64 && \
+    chown -Rh builder:builder /home/builder/ndk-llvm-x86_64 && \
+    rm -rf android-ndk-r20
+
+# Cleanup.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Finish.
+USER builder
+RUN mkdir /home/builder/env-packages
 WORKDIR /home/builder/env-packages

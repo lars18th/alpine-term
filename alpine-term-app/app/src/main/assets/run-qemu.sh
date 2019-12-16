@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 ##
 ##  Debugging script to run OS images supplied with Alpine Term.
-##  Make sure that run-socat.sh is started before this script.
 ##
 
 set -e -u

@@ -235,7 +235,7 @@ public final class TerminalService extends Service implements SessionChangedCall
 
         environment.add("ANDROID_ROOT=" + System.getenv("ANDROID_ROOT"));
         environment.add("ANDROID_DATA=" + System.getenv("ANDROID_DATA"));
-        environment.add("PREFIX=" + runtimeDataPath);
+        environment.add("APP_RUNTIME_DIR=" + runtimeDataPath);
         environment.add("LANG=en_US.UTF-8");
         environment.add("HOME=" + runtimeHome);
         environment.add("PATH=" + execPath);
@@ -253,7 +253,7 @@ public final class TerminalService extends Service implements SessionChangedCall
         // Path to directory with firmware & keymap files.
         processArgs.addAll(Arrays.asList("-L", runtimeDataPath + "/qemu-data"));
 
-        // Emulate CPU with maximal feature set.
+        // Emulate CPU with max feature set.
         processArgs.addAll(Arrays.asList("-cpu", "max"));
 
         // Set RAM allocation limit (device-specific).
@@ -282,13 +282,12 @@ public final class TerminalService extends Service implements SessionChangedCall
         // Do not create default devices.
         processArgs.add("-nodefaults");
 
-        // Set primary CD-ROM image.
-        processArgs.addAll(Arrays.asList("-drive", "file=" + runtimeDataPath + "/" + Config.CDROM_IMAGE_NAME + ",if=ide,media=cdrom,index=0,id=cd0"));
-
-        // Set primary HDD image.
-        processArgs.addAll(Arrays.asList("-device", "virtio-scsi-pci,id=virtio-scsi-pci0"));
+        // SCSI CD-ROM and HDD.
+        processArgs.addAll(Arrays.asList("-drive", "file=" + runtimeDataPath + "/" + Config.CDROM_IMAGE_NAME + ",if=none,media=cdrom,index=0,id=cd0"));
         processArgs.addAll(Arrays.asList("-drive", "file=" + runtimeDataPath + "/" + Config.HDD_IMAGE_NAME + ",if=none,discard=unmap,detect-zeroes=unmap,cache=writeback,id=hd0"));
-        processArgs.addAll(Arrays.asList("-device", "scsi-hd,drive=hd0"));
+        processArgs.addAll(Arrays.asList("-device", "virtio-scsi-pci,id=virtio-scsi-pci0"));
+        processArgs.addAll(Arrays.asList("-device", "scsi-cd,bus=virtio-scsi-pci0.0,id=scsi-cd0,drive=cd0"));
+        processArgs.addAll(Arrays.asList("-device", "scsi-hd,bus=virtio-scsi-pci0.0,id=scsi-hd0,drive=hd0"));
 
         // Boot from HDD by default, but allow to open device menu.
         processArgs.addAll(Arrays.asList("-boot", "c,menu=on"));
@@ -309,17 +308,20 @@ public final class TerminalService extends Service implements SessionChangedCall
         processArgs.add("-nographic");
 
         // Use graphics adapter but have VNC disabled by default.
-        processArgs.addAll(Arrays.asList("-device", "virtio-vga,id=virtio-vga0", "-vnc", "none"));
+        processArgs.addAll(Arrays.asList("-device", "virtio-vga,id=virtio-vga-pci0", "-vnc", "none"));
 
         // Use usb tablet as pointer device as PS/2 mouse has issues with VNC.
-        processArgs.addAll(Arrays.asList("-usb", "-device", "usb-tablet"));
+        processArgs.addAll(Arrays.asList("-device", "qemu-xhci,id=qemu-xhci-pci0"));
+        processArgs.addAll(Arrays.asList("-device", "usb-tablet,bus=qemu-xhci-pci0.0,id=usb-tablet0"));
 
         // Explicitly specify that only EN-US keyboard supported.
         // This option is used by VNC.
         processArgs.addAll(Arrays.asList("-k", "en-us"));
 
-        // Basic support for audio hardware.
-        processArgs.addAll(Arrays.asList("-audiodev", "none,id=audio0", "-soundhw", "hda"));
+        // Basic support audio support.
+        processArgs.addAll(Arrays.asList("-audiodev", "none,id=audio0"));
+        processArgs.addAll(Arrays.asList("-device", "intel-hda,id=intel-hda-pci0"));
+        processArgs.addAll(Arrays.asList("-soundhw", "pcspk"));
 
         // Disable parallel port.
         processArgs.addAll(Arrays.asList("-parallel", "none"));

@@ -1,9 +1,9 @@
-TERMUX_PKG_VERSION=1.2.11
-TERMUX_PKG_SRCURL=https://www.zlib.net/zlib-$TERMUX_PKG_VERSION.tar.xz
-TERMUX_PKG_SHA256=4ff941449631ace0d4d203e3483be9dbc9da454084111f97ea0a2114e19bf066
+PACKAGE_VERSION="1.2.11"
+PACKAGE_SRCURL="https://www.zlib.net/zlib-$PACKAGE_VERSION.tar.xz"
+PACKAGE_SHA256="4ff941449631ace0d4d203e3483be9dbc9da454084111f97ea0a2114e19bf066"
 
-termux_step_configure() {
-	"$TERMUX_PKG_SRCDIR"/configure \
-		--prefix=$TERMUX_PREFIX \
-		--static
+builder_step_configure() {
+	CFLAGS+=" $CPPFLAGS"
+	"$PACKAGE_SRCDIR"/configure \
+		--prefix="$PACKAGE_INSTALL_PREFIX" --static
 }

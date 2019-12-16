@@ -1,0 +1,148 @@
+diff -uNr qemu-4.2.0/accel/tcg/translate-all.c qemu-4.2.0.mod/accel/tcg/translate-all.c
+--- qemu-4.2.0/accel/tcg/translate-all.c	2019-12-12 20:20:47.000000000 +0200
++++ qemu-4.2.0.mod/accel/tcg/translate-all.c	2019-12-15 02:09:48.010748907 +0200
+@@ -46,6 +46,8 @@
+ #include "exec/ram_addr.h"
+ #endif
+ 
++#include <linux/mman.h>
++
+ #include "exec/cputlb.h"
+ #include "exec/tb-hash.h"
+ #include "translate-all.h"
+diff -uNr qemu-4.2.0/audio/ossaudio.c qemu-4.2.0.mod/audio/ossaudio.c
+--- qemu-4.2.0/audio/ossaudio.c	2019-12-15 00:04:31.280813450 +0200
++++ qemu-4.2.0.mod/audio/ossaudio.c	2019-12-15 02:07:27.857672693 +0200
+@@ -31,6 +31,8 @@
+ #include "audio.h"
+ #include "trace.h"
+ 
++#include <linux/mman.h>
++
+ #define AUDIO_CAP "oss"
+ #include "audio_int.h"
+ 
+diff -uNr qemu-4.2.0/block/file-posix.c qemu-4.2.0.mod/block/file-posix.c
+--- qemu-4.2.0/block/file-posix.c	2019-12-12 20:20:47.000000000 +0200
++++ qemu-4.2.0.mod/block/file-posix.c	2019-12-15 01:49:17.886927736 +0200
+@@ -58,6 +58,7 @@
+ #include <sys/dkio.h>
+ #endif
+ #ifdef __linux__
++#include <linux/mman.h>
+ #include <sys/ioctl.h>
+ #include <sys/param.h>
+ #include <sys/syscall.h>
+diff -uNr qemu-4.2.0/contrib/libvhost-user/libvhost-user.c qemu-4.2.0.mod/contrib/libvhost-user/libvhost-user.c
+--- qemu-4.2.0/contrib/libvhost-user/libvhost-user.c	2019-12-12 20:20:47.000000000 +0200
++++ qemu-4.2.0.mod/contrib/libvhost-user/libvhost-user.c	2019-12-15 02:14:03.385783919 +0200
+@@ -29,6 +29,7 @@
+ #include "qemu/compiler.h"
+ 
+ #if defined(__linux__)
++#include <linux/mman.h>
+ #include <sys/syscall.h>
+ #include <fcntl.h>
+ #include <sys/ioctl.h>
+diff -uNr qemu-4.2.0/exec.c qemu-4.2.0.mod/exec.c
+--- qemu-4.2.0/exec.c	2019-12-12 20:20:47.000000000 +0200
++++ qemu-4.2.0.mod/exec.c	2019-12-15 02:08:44.515260426 +0200
+@@ -70,6 +70,7 @@
+ #include "qemu/range.h"
+ #ifndef _WIN32
+ #include "qemu/mmap-alloc.h"
++#include <linux/mman.h>
+ #endif
+ 
+ #include "monitor/monitor.h"
+diff -uNr qemu-4.2.0/hw/vfio/common.c qemu-4.2.0.mod/hw/vfio/common.c
+--- qemu-4.2.0/hw/vfio/common.c	2019-12-12 20:20:47.000000000 +0200
++++ qemu-4.2.0.mod/hw/vfio/common.c	2019-12-15 02:11:22.131475389 +0200
+@@ -24,6 +24,7 @@
+ #include <linux/kvm.h>
+ #endif
+ #include <linux/vfio.h>
++#include <linux/mman.h>
+ 
+ #include "hw/vfio/vfio-common.h"
+ #include "hw/vfio/vfio.h"
+diff -uNr qemu-4.2.0/hw/vfio/pci-quirks.c qemu-4.2.0.mod/hw/vfio/pci-quirks.c
+--- qemu-4.2.0/hw/vfio/pci-quirks.c	2019-12-12 20:20:47.000000000 +0200
++++ qemu-4.2.0.mod/hw/vfio/pci-quirks.c	2019-12-15 02:11:55.507350513 +0200
+@@ -26,6 +26,8 @@
+ #include "pci.h"
+ #include "trace.h"
+ 
++#include <linux/mman.h>
++
+ /* Use uin32_t for vendor & device so PCI_ANY_ID expands and cannot match hw */
+ static bool vfio_pci_is(VFIOPCIDevice *vdev, uint32_t vendor, uint32_t device)
+ {
+diff -uNr qemu-4.2.0/hw/virtio/vhost-user.c qemu-4.2.0.mod/hw/virtio/vhost-user.c
+--- qemu-4.2.0/hw/virtio/vhost-user.c	2019-12-12 20:20:47.000000000 +0200
++++ qemu-4.2.0.mod/hw/virtio/vhost-user.c	2019-12-15 02:15:22.193590218 +0200
+@@ -32,6 +32,7 @@
+ #include "standard-headers/linux/vhost_types.h"
+ 
+ #ifdef CONFIG_LINUX
++#include <linux/mman.h>
+ #include <linux/userfaultfd.h>
+ #endif
+ 
+diff -uNr qemu-4.2.0/migration/postcopy-ram.c qemu-4.2.0.mod/migration/postcopy-ram.c
+--- qemu-4.2.0/migration/postcopy-ram.c	2019-12-12 20:20:48.000000000 +0200
++++ qemu-4.2.0.mod/migration/postcopy-ram.c	2019-12-15 02:06:26.802206374 +0200
+@@ -32,6 +32,8 @@
+ #include "trace.h"
+ #include "hw/boards.h"
+ 
++#include <linux/mman.h>
++
+ /* Arbitrary limit on size of each discard command,
+  * keeps them around ~200 bytes
+  */
+diff -uNr qemu-4.2.0/util/memfd.c qemu-4.2.0.mod/util/memfd.c
+--- qemu-4.2.0/util/memfd.c	2019-12-12 20:20:48.000000000 +0200
++++ qemu-4.2.0.mod/util/memfd.c	2019-12-15 01:59:29.760083408 +0200
+@@ -32,6 +32,7 @@
+ #include "qemu/host-utils.h"
+ 
+ #if defined CONFIG_LINUX && !defined CONFIG_MEMFD
++#include <linux/mman.h>
+ #include <sys/syscall.h>
+ #include <asm/unistd.h>
+ 
+diff -uNr qemu-4.2.0/util/mmap-alloc.c qemu-4.2.0.mod/util/mmap-alloc.c
+--- qemu-4.2.0/util/mmap-alloc.c	2019-12-12 20:20:48.000000000 +0200
++++ qemu-4.2.0.mod/util/mmap-alloc.c	2019-12-15 01:50:46.367473804 +0200
+@@ -10,7 +10,7 @@
+  * later.  See the COPYING file in the top-level directory.
+  */
+ 
+-#ifdef CONFIG_LINUX
++#ifdef __linux__
+ #include <linux/mman.h>
+ #else  /* !CONFIG_LINUX */
+ #define MAP_SYNC              0x0
+diff -uNr qemu-4.2.0/util/oslib-posix.c qemu-4.2.0.mod/util/oslib-posix.c
+--- qemu-4.2.0/util/oslib-posix.c	2019-12-12 20:20:48.000000000 +0200
++++ qemu-4.2.0.mod/util/oslib-posix.c	2019-12-15 01:56:55.127967331 +0200
+@@ -42,6 +42,7 @@
+ #include "qemu/cutils.h"
+ 
+ #ifdef CONFIG_LINUX
++#include <linux/mman.h>
+ #include <sys/syscall.h>
+ #endif
+ 
+diff -uNr qemu-4.2.0/util/vfio-helpers.c qemu-4.2.0.mod/util/vfio-helpers.c
+--- qemu-4.2.0/util/vfio-helpers.c	2019-12-12 20:20:48.000000000 +0200
++++ qemu-4.2.0.mod/util/vfio-helpers.c	2019-12-15 02:01:43.193067952 +0200
+@@ -13,6 +13,7 @@
+ #include "qemu/osdep.h"
+ #include <sys/ioctl.h>
+ #include <linux/vfio.h>
++#include <linux/mman.h>
+ #include "qapi/error.h"
+ #include "exec/ramlist.h"
+ #include "exec/cpu-common.h"

@@ -7,10 +7,6 @@
     <string name="exit_label">Exit</string>
     <string name="ok_label">OK</string>
 
-    <!-- Unsupported device dialog -->
-    <string name="dialog_unsupported_device_title">Unsupported device</string>
-    <string name="dialog_unsupported_device_desc">There is a known issue with QEMU on some devices. You may observe freezes, crashes and other incorrect behaviour.</string>
-
     <!-- Installer dialog -->
     <string name="installer_progress_message">Installing runtime data…</string>
     <string name="installer_error_title">Installation failed</string>

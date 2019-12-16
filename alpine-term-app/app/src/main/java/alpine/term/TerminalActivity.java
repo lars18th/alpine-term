@@ -528,19 +528,6 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
                 Installer.setupIfNeeded(TerminalActivity.this, () -> {
                     if (mTermService == null) return; // Activity might have been destroyed.
                     try {
-                        if (!Config.isDeviceSupported()) {
-                            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(TerminalActivity.this);
-                            dialogBuilder.setTitle(R.string.dialog_unsupported_device_title);
-                            dialogBuilder.setMessage(R.string.dialog_unsupported_device_desc);
-                            dialogBuilder.setCancelable(true);
-                            dialogBuilder.setNegativeButton(R.string.ok_label, (dialog, which) -> dialog.dismiss());
-                            dialogBuilder.setPositiveButton(R.string.exit_label, (dialog, which) -> {
-                                dialog.dismiss();
-                                mTermService.terminateService();
-                            });
-                            dialogBuilder.show();
-                        }
-
                         TerminalSession session;
 
                         session = mTermService.createQemuSession();

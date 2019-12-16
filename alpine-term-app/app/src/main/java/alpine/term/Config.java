@@ -40,10 +40,11 @@ public class Config {
     public static final String HDD_IMAGE_NAME = "alpine-linux-hdd.qcow2";
 
     /**
-     * Name of zip archive with QEMU firmware & keymap files.
+     * Name of zip archive with QEMU firmware & keymap files + ca certificates
+     * bundle used by libcurl.
      * Must be a name of file located in assets directory.
      */
-    public static final String QEMU_DATA_PACKAGE = "qemu-data.bin";
+    public static final String QEMU_DATA_PACKAGE = "platform-independent-data.bin";
 
     /**
      * Upstream DNS server used by QEMU DNS resolver.
@@ -67,23 +68,5 @@ public class Config {
      */
     public static String getTemporaryDirectory(final Context context) {
         return context.getCacheDir().getAbsolutePath();
-    }
-
-    /**
-     * Returns true if CPU architecture is supported, otherwise false.
-     */
-    public static boolean isDeviceSupported() {
-        for (String androidArch : Build.SUPPORTED_ABIS) {
-            switch (androidArch) {
-                case "arm64-v8a":
-                case "x86_64":
-                case "x86":
-                    return true;
-                default:
-                    break;
-            }
-        }
-
-        return false;
     }
 }
