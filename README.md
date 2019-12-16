@@ -19,7 +19,6 @@ is not responsible for any damage that may affect your device or data.
 In general, it should work on any high-end device which met the following
 requirements:
 
- - AArch64 CPU.
  - Android 7.0 or higher.
  - At least 1 GB of space on the internal storage.
 
