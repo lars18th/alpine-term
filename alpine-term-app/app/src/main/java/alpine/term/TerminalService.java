@@ -332,7 +332,7 @@ public final class TerminalService extends Service implements SessionChangedCall
         // This option is used by VNC.
         processArgs.addAll(Arrays.asList("-k", "en-us"));
 
-        // Basic support audio support.
+        // Basic audio support.
         processArgs.addAll(Arrays.asList("-audiodev", "none,id=audio0"));
         processArgs.addAll(Arrays.asList("-device", "intel-hda,id=intel-hda-pci0"));
         processArgs.addAll(Arrays.asList("-soundhw", "pcspk"));
