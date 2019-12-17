@@ -1,14 +1,16 @@
 PACKAGE_VERSION="4.1.1"
-#PACKAGE_VERSION="4.2.0"
 PACKAGE_SRCURL="https://download.qemu.org/qemu-${PACKAGE_VERSION}.tar.xz"
 PACKAGE_SHA256="ed6fdbbdd272611446ff8036991e9b9f04a2ab2e3ffa9e79f3bab0eb9a95a1d2"
-#PACKAGE_SHA256="d3481d4108ce211a053ef15be69af1bdd9dde1510fda80d92be0f6c3e98768f0"
-PACKAGE_DEPENDS="curl, glib, libjpeg-turbo, libpng, lzo, pixman, snappy, zlib"
+PACKAGE_DEPENDS="curl, glib, libgcrypt, libjpeg-turbo, libpng, lzo, pixman, snappy, zlib"
 PACKAGE_BUILD_IN_SRC="true"
 
 builder_step_configure() {
 	CFLAGS+=" $CPPFLAGS"
 	CXXFLAGS+=" $CPPFLAGS"
+
+	cp "$PACKAGE_INSTALL_PREFIX"/bin/libgcrypt-config \
+		"$PACKAGE_TMPDIR"/libgcrypt-config
+	export PATH="$PATH:$PACKAGE_TMPDIR"
 
 	./configure \
 		--prefix="$PACKAGE_INSTALL_PREFIX" \
@@ -17,6 +19,7 @@ builder_step_configure() {
 		--cc="$CC" \
 		--cxx="$CXX" \
 		--objcc="$CC" \
+		--enable-gcrypt \
 		--disable-curses \
 		--disable-iconv \
 		--enable-vnc \

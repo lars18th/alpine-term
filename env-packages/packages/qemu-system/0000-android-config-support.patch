@@ -1,6 +1,6 @@
 diff -uNr qemu-4.1.1/configure qemu-4.1.1.mod/configure
 --- qemu-4.1.1/configure	2019-11-14 20:06:20.000000000 +0200
-+++ qemu-4.1.1.mod/configure	2019-12-16 04:42:34.084371901 +0200
++++ qemu-4.1.1.mod/configure	2019-12-17 03:04:27.549114364 +0200
 @@ -125,7 +125,7 @@
  compile_prog() {
    local_cflags="$1"
@@ -21,7 +21,28 @@ diff -uNr qemu-4.1.1/configure qemu-4.1.1.mod/configure
          snappy="yes"
      else
          if test "$snappy" = "yes"; then
-@@ -3209,6 +3209,7 @@
+@@ -2850,6 +2850,8 @@
+ fi
+ 
+ has_libgcrypt() {
++	return 0
++
+     if ! has "libgcrypt-config"
+     then
+ 	return 1
+@@ -2908,10 +2910,7 @@
+         # Debian has removed -lgpg-error from libgcrypt-config
+         # as it "spreads unnecessary dependencies" which in
+         # turn breaks static builds...
+-        if test "$static" = "yes"
+-        then
+-            gcrypt_libs="$gcrypt_libs -lgpg-error"
+-        fi
++        gcrypt_libs="$gcrypt_libs -lgpg-error"
+ 
+         # Link test to make sure the given libraries work (e.g for static).
+         write_c_skeleton
+@@ -3209,6 +3208,7 @@
  # VNC SASL detection
  if test "$vnc" = "yes" && test "$vnc_sasl" != "no" ; then
    cat > $TMPC <<EOF
@@ -29,7 +50,7 @@ diff -uNr qemu-4.1.1/configure qemu-4.1.1.mod/configure
  #include <sasl/sasl.h>
  #include <stdio.h>
  int main(void) { sasl_server_init(NULL, "qemu"); return 0; }
-@@ -3265,10 +3266,10 @@
+@@ -3265,10 +3265,10 @@
  EOF
    if $pkg_config libpng --exists; then
      vnc_png_cflags=$($pkg_config libpng --cflags)
@@ -42,7 +63,7 @@ diff -uNr qemu-4.1.1/configure qemu-4.1.1.mod/configure
    fi
    if compile_prog "$vnc_png_cflags" "$vnc_png_libs" ; then
      vnc_png=yes
-@@ -3602,7 +3603,7 @@
+@@ -3602,7 +3602,7 @@
  int main(void) { curl_easy_init(); curl_multi_setopt(0, 0, 0); return 0; }
  EOF
    curl_cflags=$($curlconfig --cflags 2>/dev/null)
@@ -51,7 +72,7 @@ diff -uNr qemu-4.1.1/configure qemu-4.1.1.mod/configure
    if compile_prog "$curl_cflags" "$curl_libs" ; then
      curl=yes
    else
-@@ -3652,7 +3653,7 @@
+@@ -3652,7 +3652,7 @@
  for i in $glib_modules; do
      if $pkg_config --atleast-version=$glib_req_ver $i; then
          glib_cflags=$($pkg_config --cflags $i)
@@ -60,7 +81,7 @@ diff -uNr qemu-4.1.1/configure qemu-4.1.1.mod/configure
          QEMU_CFLAGS="$glib_cflags $QEMU_CFLAGS"
          LIBS="$glib_libs $LIBS"
          libs_qga="$glib_libs $libs_qga"
-@@ -3664,7 +3665,7 @@
+@@ -3664,7 +3664,7 @@
  if $pkg_config --atleast-version=$glib_req_ver gio-2.0; then
      gio=yes
      gio_cflags=$($pkg_config --cflags gio-2.0)
@@ -69,7 +90,7 @@ diff -uNr qemu-4.1.1/configure qemu-4.1.1.mod/configure
  else
      gio=no
  fi
-@@ -3751,7 +3752,7 @@
+@@ -3751,7 +3751,7 @@
    pixman_libs=
  elif $pkg_config --atleast-version=0.21.8 pixman-1 > /dev/null 2>&1; then
    pixman_cflags=$($pkg_config --cflags pixman-1)
@@ -78,7 +99,7 @@ diff -uNr qemu-4.1.1/configure qemu-4.1.1.mod/configure
  else
    error_exit "pixman >= 0.21.8 not present." \
        "Please install the pixman devel package."
-@@ -4415,6 +4416,7 @@
+@@ -4415,6 +4415,7 @@
  if compile_prog "" "" ; then
    signalfd=yes
  fi
@@ -86,7 +107,7 @@ diff -uNr qemu-4.1.1/configure qemu-4.1.1.mod/configure
  
  # check if optreset global is declared by <getopt.h>
  optreset="no"
-@@ -5981,9 +5983,9 @@
+@@ -5981,9 +5982,9 @@
    CFLAGS="-fprofile-arcs -ftest-coverage -g $CFLAGS"
    LDFLAGS="-fprofile-arcs -ftest-coverage $LDFLAGS"
  elif test "$fortify_source" = "yes" ; then
@@ -98,7 +119,7 @@ diff -uNr qemu-4.1.1/configure qemu-4.1.1.mod/configure
  fi
  
  if test "$have_asan" = "yes"; then
-@@ -6074,6 +6076,7 @@
+@@ -6074,6 +6075,7 @@
  if [ "$eventfd" = "yes" ]; then
    ivshmem=yes
  fi
@@ -106,7 +127,7 @@ diff -uNr qemu-4.1.1/configure qemu-4.1.1.mod/configure
  
  tools=""
  if test "$want_tools" = "yes" ; then
-@@ -6751,9 +6754,9 @@
+@@ -6751,9 +6753,9 @@
  if test "$posix_fallocate" = "yes" ; then
    echo "CONFIG_POSIX_FALLOCATE=y" >> $config_host_mak
  fi

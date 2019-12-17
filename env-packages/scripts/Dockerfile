@@ -11,9 +11,9 @@ ENV LANG C.UTF-8
 RUN DEBIAN_FRONTEND=noninteractive \
     apt update && apt upgrade && \
     apt install -yq --no-install-recommends \
-    automake bison ca-certificates curl flex g++ git gettext \
-    gperf libglib2.0-dev libtool-bin m4 pkg-config python \
-    python3.7 sudo tar texinfo unzip xmlto zip
+    automake autopoint bison ca-certificates curl flex g++ \
+    git gettext gperf libglib2.0-dev libtool-bin m4 pkg-config \
+    python python3.7 sudo tar texinfo unzip xmlto zip
 
 # Setup user.
 RUN adduser --disabled-password --shell /bin/bash --gecos "" builder && \
