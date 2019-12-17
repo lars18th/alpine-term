@@ -22,10 +22,6 @@ requirements:
  - Android 7.0 or higher.
  - At least 1 GB of space on the internal storage.
 
-Note that application also works on x86 & x86_64 devices, however I tested
-it only in Android emulators coming with SDK. ARM devices are completely
-unsupported.
-
 ## Credits
 
 Alpine Term relies on the source code of the following projects:
