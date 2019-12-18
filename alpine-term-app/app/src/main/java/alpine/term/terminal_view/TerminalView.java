@@ -282,7 +282,7 @@ public final class TerminalView extends View {
 
             @Override
             public boolean finishComposingText() {
-                if (LOG_KEY_EVENTS) Log.i(Config.LOG_TAG, "IME: finishComposingText()");
+                if (LOG_KEY_EVENTS) Log.i(Config.INPUT_LOG_TAG, "finishComposingText()");
                 super.finishComposingText();
 
                 sendTextToTerminal(getEditable());
@@ -293,7 +293,7 @@ public final class TerminalView extends View {
             @Override
             public boolean commitText(CharSequence text, int newCursorPosition) {
                 if (LOG_KEY_EVENTS) {
-                    Log.i(Config.LOG_TAG, "IME: commitText(\"" + text + "\", " + newCursorPosition + ")");
+                    Log.i(Config.INPUT_LOG_TAG, "commitText(\"" + text + "\", " + newCursorPosition + ")");
                 }
                 super.commitText(text, newCursorPosition);
 
@@ -308,7 +308,7 @@ public final class TerminalView extends View {
             @Override
             public boolean deleteSurroundingText(int leftLength, int rightLength) {
                 if (LOG_KEY_EVENTS) {
-                    Log.i(Config.LOG_TAG, "IME: deleteSurroundingText(" + leftLength + ", " + rightLength + ")");
+                    Log.i(Config.INPUT_LOG_TAG, "deleteSurroundingText(" + leftLength + ", " + rightLength + ")");
                 }
                 // The stock Samsung keyboard with 'Auto check spelling' enabled sends leftLength > 1.
                 KeyEvent deleteKey = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL);
@@ -544,7 +544,7 @@ public final class TerminalView extends View {
     @Override
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
         if (LOG_KEY_EVENTS)
-            Log.i(Config.LOG_TAG, "onKeyPreIme(keyCode=" + keyCode + ", event=" + event + ")");
+            Log.i(Config.INPUT_LOG_TAG, "onKeyPreIme(keyCode=" + keyCode + ", event=" + event + ")");
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (mIsSelectingText) {
                 stopTextSelectionMode();
@@ -565,7 +565,7 @@ public final class TerminalView extends View {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (LOG_KEY_EVENTS)
-            Log.i(Config.LOG_TAG, "onKeyDown(keyCode=" + keyCode + ", isSystem()=" + event.isSystem() + ", event=" + event + ")");
+            Log.i(Config.INPUT_LOG_TAG, "onKeyDown(keyCode=" + keyCode + ", isSystem()=" + event.isSystem() + ", event=" + event + ")");
         if (mEmulator == null) return true;
         stopTextSelectionMode();
 
@@ -589,7 +589,7 @@ public final class TerminalView extends View {
         if (event.isAltPressed()) keyMod |= KeyHandler.KEYMOD_ALT;
         if (event.isShiftPressed()) keyMod |= KeyHandler.KEYMOD_SHIFT;
         if (!event.isFunctionPressed() && handleKeyCode(keyCode, keyMod)) {
-            if (LOG_KEY_EVENTS) Log.i(Config.LOG_TAG, "handleKeyCode() took key event");
+            if (LOG_KEY_EVENTS) Log.i(Config.INPUT_LOG_TAG, "handleKeyCode() took key event");
             return true;
         }
 
@@ -605,7 +605,7 @@ public final class TerminalView extends View {
 
         int result = event.getUnicodeChar(effectiveMetaState);
         if (LOG_KEY_EVENTS)
-            Log.i(Config.LOG_TAG, "KeyEvent#getUnicodeChar(" + effectiveMetaState + ") returned: " + result);
+            Log.i(Config.INPUT_LOG_TAG, "KeyEvent#getUnicodeChar(" + effectiveMetaState + ") returned: " + result);
         if (result == 0) {
             return false;
         }
@@ -632,7 +632,7 @@ public final class TerminalView extends View {
 
     private void inputCodePoint(int codePoint, boolean controlDownFromEvent, boolean leftAltDownFromEvent) {
         if (LOG_KEY_EVENTS) {
-            Log.i(Config.LOG_TAG, "inputCodePoint(codePoint=" + codePoint + ", controlDownFromEvent=" + controlDownFromEvent + ", leftAltDownFromEvent="
+            Log.i(Config.INPUT_LOG_TAG, "inputCodePoint(codePoint=" + codePoint + ", controlDownFromEvent=" + controlDownFromEvent + ", leftAltDownFromEvent="
                 + leftAltDownFromEvent + ")");
         }
 
@@ -707,7 +707,7 @@ public final class TerminalView extends View {
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (LOG_KEY_EVENTS)
-            Log.i(Config.LOG_TAG, "onKeyUp(keyCode=" + keyCode + ", event=" + event + ")");
+            Log.i(Config.INPUT_LOG_TAG, "onKeyUp(keyCode=" + keyCode + ", event=" + event + ")");
         if (mEmulator == null) return true;
 
         if (mClient.onKeyUp(keyCode, event)) {

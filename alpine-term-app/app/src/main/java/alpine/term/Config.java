@@ -51,9 +51,24 @@ public class Config {
     public static final String QEMU_UPSTREAM_DNS = "8.8.8.8";
 
     /**
-     * A tag used for logging.
+     * A tag used for general logging.
      */
-    public static final String LOG_TAG = "alpine-term:app";
+    public static final String APP_LOG_TAG = "alpine-term:app";
+
+    /**
+     * A tag used for input (ime) logging.
+     */
+    public static final String INPUT_LOG_TAG = "alpine-term:input";
+
+    /**
+     * A tag used for installer logging.
+     */
+    public static final String INSTALLER_LOG_TAG = "alpine-term:installer";
+
+    /**
+     * A tag used for wakelock logging.
+     */
+    public static final String WAKELOCK_LOG_TAG = "alpine-term:wakelock";
 
     /**
      * Returns path to runtime environment directory.

@@ -239,7 +239,7 @@ public final class TerminalRow {
             ++mSpaceUsed;
         } else if (oldCodePointDisplayWidth == 1 && newCodePointDisplayWidth == 2) {
             if (columnToSet == mColumns - 1) {
-                throw new IllegalArgumentException("Cannot put wide character in last column");
+                throw new IllegalArgumentException("cannot put wide character in last column");
             } else if (columnToSet == mColumns - 2) {
                 // Truncate the line to the second part of this wide char:
                 mSpaceUsed = (short) newNextColumnIndex;

@@ -108,15 +108,15 @@ public final class TerminalColorScheme {
                 try {
                     colorIndex = Integer.parseInt(key.substring(5));
                 } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Invalid property: '" + key + "'");
+                    throw new IllegalArgumentException("invalid property: '" + key + "'");
                 }
             } else {
-                throw new IllegalArgumentException("Invalid property: '" + key + "'");
+                throw new IllegalArgumentException("invalid property: '" + key + "'");
             }
 
             int colorValue = TerminalColors.parse(value);
             if (colorValue == 0)
-                throw new IllegalArgumentException("Property '" + key + "' has invalid color: '" + value + "'");
+                throw new IllegalArgumentException("property '" + key + "' has invalid color: '" + value + "'");
 
             mDefaultColors[colorIndex] = colorValue;
         }

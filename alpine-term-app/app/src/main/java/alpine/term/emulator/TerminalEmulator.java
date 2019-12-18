@@ -297,7 +297,7 @@ public final class TerminalEmulator {
                 return DECSET_BIT_BRACKETED_PASTE_MODE;
             default:
                 return -1;
-            // throw new IllegalArgumentException("Unsupported decset: " + decsetBit);
+            // throw new IllegalArgumentException("unsupported decset: " + decsetBit);
         }
     }
 
@@ -773,7 +773,7 @@ public final class TerminalEmulator {
                                 if (internalBit == -1) {
                                     value = isDecsetInternalBitSet(internalBit) ? 1 : 2; // 1=set, 2=reset.
                                 } else {
-                                    Log.e(EmulatorDebug.LOG_TAG, "Got DECRQM for unrecognized private DEC mode=" + mode);
+                                    Log.e(EmulatorDebug.LOG_TAG, "got DECRQM for unrecognized private DEC mode=" + mode);
                                     value = 0; // 0=not recognized, 3=permanently set, 4=permanently reset
                                 }
                             }
@@ -910,7 +910,7 @@ public final class TerminalEmulator {
                                     case "&8": // Undo key - ignore.
                                         break;
                                     default:
-                                        Log.w(EmulatorDebug.LOG_TAG, "Unhandled termcap/terminfo name: '" + trans + "'");
+                                        Log.w(EmulatorDebug.LOG_TAG, "unhandled termcap/terminfo name: '" + trans + "'");
                                 }
                                 // Respond with invalid request:
                                 mSession.write("\033P0+r" + part + "\033\\");
@@ -922,12 +922,12 @@ public final class TerminalEmulator {
                                 mSession.write("\033P1+r" + part + "=" + hexEncoded + "\033\\");
                             }
                         } else {
-                            Log.e(EmulatorDebug.LOG_TAG, "Invalid device termcap/terminfo name of odd length: " + part);
+                            Log.e(EmulatorDebug.LOG_TAG, "invalid device termcap/terminfo name of odd length: " + part);
                         }
                     }
                 } else {
                     if (LOG_ESCAPE_SEQUENCES)
-                        Log.e(EmulatorDebug.LOG_TAG, "Unrecognized device control string: " + dcs);
+                        Log.e(EmulatorDebug.LOG_TAG, "unrecognized device control string: " + dcs);
                 }
                 finishSequence();
             }
@@ -1017,7 +1017,7 @@ public final class TerminalEmulator {
                     int externalBit = mArgs[i];
                     int internalBit = mapDecSetBitToInternalBit(externalBit);
                     if (internalBit == -1) {
-                        Log.w(EmulatorDebug.LOG_TAG, "Ignoring request to save/recall decset bit=" + externalBit);
+                        Log.w(EmulatorDebug.LOG_TAG, "ignoring request to save/recall decset bit=" + externalBit);
                     } else {
                         if (b == 's') {
                             mSavedDecSetFlags |= internalBit;
@@ -1748,7 +1748,7 @@ public final class TerminalEmulator {
                 int firstArg = mArgs[i + 1];
                 if (firstArg == 2) {
                     if (i + 4 > mArgIndex) {
-                        Log.w(EmulatorDebug.LOG_TAG, "Too few CSI" + code + ";2 RGB arguments");
+                        Log.w(EmulatorDebug.LOG_TAG, "too few CSI" + code + ";2 RGB arguments");
                     } else {
                         int red = mArgs[i + 2], green = mArgs[i + 3], blue = mArgs[i + 4];
                         if (red < 0 || green < 0 || blue < 0 || red > 255 || green > 255 || blue > 255) {
@@ -1773,7 +1773,7 @@ public final class TerminalEmulator {
                             mBackColor = color;
                         }
                     } else {
-                        if (LOG_ESCAPE_SEQUENCES) Log.w(EmulatorDebug.LOG_TAG, "Invalid color index: " + color);
+                        if (LOG_ESCAPE_SEQUENCES) Log.w(EmulatorDebug.LOG_TAG, "invalid color index: " + color);
                     }
                 } else {
                     finishSequenceAndLogError("Invalid ISO-8613-3 SGR first argument: " + firstArg);

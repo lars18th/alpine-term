@@ -63,11 +63,14 @@ public class Installer {
                     final File STAGING_PREFIX_DIR = new File(Config.getDataDirectory(activity) + ".staging");
 
                     if (STAGING_PREFIX_DIR.exists()) {
+                        Log.i(Config.INSTALLER_LOG_TAG, "deleting directory " + STAGING_PREFIX_DIR.getAbsolutePath());
                         deleteFolder(STAGING_PREFIX_DIR);
                     }
 
                     final byte[] buffer = new byte[16384];
                     AssetManager assetManager = activity.getAssets();
+
+                    Log.i(Config.INSTALLER_LOG_TAG, "extracting runtime data");
 
                     try (ZipInputStream zipInput = new ZipInputStream(assetManager.open(Config.QEMU_DATA_PACKAGE))) {
                         ZipEntry zipEntry;
@@ -76,9 +79,11 @@ public class Installer {
                             File targetFile = new File(STAGING_PREFIX_DIR, zipEntryName);
 
                             if (zipEntry.isDirectory()) {
+                                Log.i(Config.INSTALLER_LOG_TAG, "creating directory " + targetFile.getAbsolutePath());
                                 if (!targetFile.mkdirs())
-                                    throw new RuntimeException("Failed to create directory: " + targetFile.getAbsolutePath());
+                                    throw new RuntimeException("failed to create directory: " + targetFile.getAbsolutePath());
                             } else {
+                                Log.i(Config.INSTALLER_LOG_TAG, "writing " + targetFile.getAbsolutePath());
                                 try (FileOutputStream outStream = new FileOutputStream(targetFile)) {
                                     int readBytes;
                                     while ((readBytes = zipInput.read(buffer)) != -1) {
@@ -91,6 +96,7 @@ public class Installer {
                     }
 
                     // Extract HDD image for QEMU.
+                    Log.i(Config.INSTALLER_LOG_TAG, "writing " + STAGING_PREFIX_DIR + "/" + Config.HDD_IMAGE_NAME);
                     try (InputStream inStream = assetManager.open(Config.HDD_IMAGE_NAME)) {
                         try (FileOutputStream outStream = new FileOutputStream(new File(STAGING_PREFIX_DIR, Config.HDD_IMAGE_NAME))) {
                             int readBytes;
@@ -102,6 +108,7 @@ public class Installer {
                     }
 
                     // Extract CD-ROM image for QEMU.
+                    Log.i(Config.INSTALLER_LOG_TAG, "writing " + STAGING_PREFIX_DIR + "/" + Config.CDROM_IMAGE_NAME);
                     try (InputStream inStream = assetManager.open(Config.CDROM_IMAGE_NAME)) {
                         try (FileOutputStream outStream = new FileOutputStream(new File(STAGING_PREFIX_DIR, Config.CDROM_IMAGE_NAME))) {
                             int readBytes;
@@ -113,12 +120,14 @@ public class Installer {
                     }
 
                     if (!STAGING_PREFIX_DIR.renameTo(PREFIX_DIR)) {
-                        throw new RuntimeException("Unable to rename staging folder");
+                        throw new RuntimeException("unable to rename staging folder");
+                    } else {
+                        Log.i(Config.INSTALLER_LOG_TAG, "finished extracting runtime data");
                     }
 
                     activity.runOnUiThread(whenDone);
                 } catch (final Exception e) {
-                    Log.e(Config.LOG_TAG, "Runtime data installation failed", e);
+                    Log.e(Config.INSTALLER_LOG_TAG, "runtime data installation failed", e);
                     activity.runOnUiThread(() -> {
                         try {
                             new AlertDialog.Builder(activity)
@@ -163,8 +172,10 @@ public class Installer {
         }
 
         if (!fileOrDirectory.delete()) {
-            throw new RuntimeException("Unable to delete " +
+            throw new RuntimeException("unable to delete " +
                 (fileOrDirectory.isDirectory() ? "directory " : "file ") + fileOrDirectory.getAbsolutePath());
+        } else {
+            Log.i(Config.INSTALLER_LOG_TAG, "successfully deleted " + fileOrDirectory.getAbsolutePath());
         }
     }
 

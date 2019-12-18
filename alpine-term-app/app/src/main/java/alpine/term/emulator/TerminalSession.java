@@ -81,7 +81,7 @@ public final class TerminalSession extends TerminalOutput {
             descriptorField.setAccessible(true);
             descriptorField.set(result, fileDescriptor);
         } catch (NoSuchFieldException | IllegalAccessException | IllegalArgumentException e) {
-            Log.wtf(EmulatorDebug.LOG_TAG, "Error accessing FileDescriptor#descriptor private field", e);
+            Log.wtf(EmulatorDebug.LOG_TAG, "error accessing FileDescriptor#descriptor private field", e);
             System.exit(1);
         }
         return result;
@@ -256,7 +256,7 @@ public final class TerminalSession extends TerminalOutput {
     public void writeCodePoint(boolean prependEscape, int codePoint) {
         if (codePoint > 1114111 || (codePoint >= 0xD800 && codePoint <= 0xDFFF)) {
             // 1114111 (= 2**16 + 1024**2 - 1) is the highest code point, [0xD800,0xDFFF] is the surrogate range.
-            throw new IllegalArgumentException("Invalid code point: " + codePoint);
+            throw new IllegalArgumentException("invalid code point: " + codePoint);
         }
 
         int bufferPosition = 0;
@@ -310,7 +310,7 @@ public final class TerminalSession extends TerminalOutput {
             try {
                 Os.kill(mShellPid, OsConstants.SIGKILL);
             } catch (ErrnoException e) {
-                Log.w(EmulatorDebug.LOG_TAG, "Failed sending SIGKILL: " + e.getMessage());
+                Log.w(EmulatorDebug.LOG_TAG, "failed sending SIGKILL: " + e.getMessage());
             }
         }
     }

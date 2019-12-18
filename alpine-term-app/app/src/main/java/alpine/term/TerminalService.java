@@ -128,12 +128,12 @@ public class TerminalService extends Service implements SessionChangedCallback {
         } else if (INTENT_ACTION_WAKELOCK_ENABLE.equals(action)) {
             if (mWakeLock == null) {
                 PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-                mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, Config.LOG_TAG);
+                mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, Config.WAKELOCK_LOG_TAG);
                 mWakeLock.acquire();
 
                 // http://tools.android.com/tech-docs/lint-in-studio-2-3#TOC-WifiManager-Leak
                 WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, Config.LOG_TAG);
+                mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, Config.WAKELOCK_LOG_TAG);
                 mWifiLock.acquire();
 
                 updateNotification();
@@ -149,7 +149,7 @@ public class TerminalService extends Service implements SessionChangedCallback {
                 updateNotification();
             }
         } else if (action != null) {
-            Log.w(Config.LOG_TAG, "Received an unknown action for TerminalService: '" + action + "'");
+            Log.w(Config.APP_LOG_TAG, "received an unknown action for TerminalService: " + action);
         }
 
         // If this service really do get killed, there is no point restarting it automatically - let the user do on next
@@ -349,6 +349,8 @@ public class TerminalService extends Service implements SessionChangedCallback {
             processArgs.addAll(Arrays.asList("-serial", "chardev:console" + i));
         }
 
+        Log.i(Config.APP_LOG_TAG, "initiating QEMU session with following arguments: " + processArgs.toString());
+
         TerminalSession session = new TerminalSession(execPath + "/libqemu.so", processArgs.toArray(new String[0]), environment.toArray(new String[0]), runtimeHome, this);
         mTerminalSessions.add(session);
         updateNotification();
@@ -376,8 +378,14 @@ public class TerminalService extends Service implements SessionChangedCallback {
         environment.add("PATH=" + execPath);
         environment.add("TMPDIR=" + Config.getTemporaryDirectory(appContext));
 
-        String[] processArgs = {execPath + "/libsocat.so", "/dev/tty,rawer", "UNIX-CONNECT:" + runtimeDataPath + "/.qemu" + sessionNumber + ",interval=0.1,forever"};
-        TerminalSession session = new TerminalSession(execPath + "/libsocat.so", processArgs, environment.toArray(new String[0]), runtimeDataPath, this);
+        ArrayList<String> processArgs = new ArrayList<>();
+        processArgs.add(execPath + "/libsocat.so");
+        processArgs.add("/dev/tty,rawer");
+        processArgs.add("UNIX-CONNECT:" + runtimeDataPath + "/.qemu" + sessionNumber + ",interval=0.1,forever");
+
+        Log.i(Config.APP_LOG_TAG, "initiating socat session with following arguments: " + processArgs.toString());
+
+        TerminalSession session = new TerminalSession(execPath + "/libsocat.so", processArgs.toArray(new String[0]), environment.toArray(new String[0]), runtimeDataPath, this);
         mTerminalSessions.add(session);
         updateNotification();
 

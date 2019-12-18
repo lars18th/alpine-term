@@ -128,7 +128,7 @@ public class TerminalStylingActivity extends Activity {
 
             sendBroadcast(new Intent().setAction(TerminalActivity.INTENT_ACTION_RELOAD_STYLING));
         } catch (Exception e) {
-            Log.e(Config.LOG_TAG, "Failed to write " + outputFileName, e);
+            Log.e(Config.APP_LOG_TAG, "failed to write " + outputFileName, e);
             Toast.makeText(this, R.string.style_toast_install_failed, Toast.LENGTH_LONG).show();
         }
     }

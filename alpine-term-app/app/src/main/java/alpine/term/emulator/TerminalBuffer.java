@@ -408,7 +408,7 @@ public final class TerminalBuffer {
     public void blockSet(int sx, int sy, int w, int h, int val, long style) {
         if (sx < 0 || sx + w > mColumns || sy < 0 || sy + h > mScreenRows) {
             throw new IllegalArgumentException(
-                "Illegal arguments! blockSet(" + sx + ", " + sy + ", " + w + ", " + h + ", " + val + ", " + mColumns + ", " + mScreenRows + ")");
+                "illegal arguments: blockSet(" + sx + ", " + sy + ", " + w + ", " + h + ", " + val + ", " + mColumns + ", " + mScreenRows + ")");
         }
         for (int y = 0; y < h; y++)
             for (int x = 0; x < w; x++)

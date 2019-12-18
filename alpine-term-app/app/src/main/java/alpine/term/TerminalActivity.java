@@ -607,7 +607,7 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
             final Typeface newTypeface = (fontFile.exists() && fontFile.length() > 0) ? Typeface.createFromFile(fontFile) : Typeface.MONOSPACE;
             mTerminalView.setTypeface(newTypeface);
         } catch (Exception e) {
-            Log.e(Config.LOG_TAG, "An error occurred while reloading terminal styling", e);
+            Log.e(Config.APP_LOG_TAG, "failed to reload terminal styling", e);
         }
     }
 
