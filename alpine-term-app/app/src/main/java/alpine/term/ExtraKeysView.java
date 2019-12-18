@@ -169,7 +169,7 @@ public final class ExtraKeysView extends GridLayout {
                     if (Settings.System.getInt(getContext().getContentResolver(),
                         Settings.System.HAPTIC_FEEDBACK_ENABLED, 0) != 0) {
 
-                        if (Build.VERSION.SDK_INT >= 28) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                             finalButton.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
                         } else {
                             // Perform haptic feedback only if no total silence mode enabled.

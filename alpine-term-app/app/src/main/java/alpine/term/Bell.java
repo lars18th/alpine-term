@@ -49,7 +49,7 @@ public class Bell {
     private Bell(final Vibrator vibrator) {
         bellRunnable = () -> {
             if (vibrator != null) {
-                if (Build.VERSION.SDK_INT >= 26) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     vibrator.vibrate(VibrationEffect.createOneShot(DURATION, 10));
                 } else {
                     //noinspection deprecation
