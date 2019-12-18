@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package alpine.term;
 
 import android.content.Context;
-import android.os.Build;
 
 /**
  * Application build-time configuration entries.

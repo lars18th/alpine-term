@@ -91,7 +91,6 @@ import alpine.term.terminal_view.TerminalView;
  * </ul>
  * about memory leaks.
  */
-@SuppressWarnings("WeakerAccess")
 public final class TerminalActivity extends Activity implements ServiceConnection {
 
     public static final String INTENT_ACTION_RELOAD_STYLING = "alpine.term.RELOAD_TERMINAL_STYLING";

@@ -52,7 +52,6 @@ public class Bell {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     vibrator.vibrate(VibrationEffect.createOneShot(DURATION, 10));
                 } else {
-                    //noinspection deprecation
                     vibrator.vibrate(DURATION);
                 }
             }

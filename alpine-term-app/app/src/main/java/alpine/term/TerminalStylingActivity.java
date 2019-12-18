@@ -67,7 +67,9 @@ public class TerminalStylingActivity extends Activity {
 
         final ArrayAdapter<Selectable> fontAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item);
         fontSpinner.setOnClickListener(v -> {
-            final AlertDialog dialog = new AlertDialog.Builder(TerminalStylingActivity.this).setAdapter(fontAdapter, (dialog12, which) -> copyFile(fontAdapter.getItem(which), false)).create();
+            AlertDialog.Builder builder = new AlertDialog.Builder(TerminalStylingActivity.this);
+            builder.setAdapter(fontAdapter, (dialog12, which) -> copyFile(fontAdapter.getItem(which), false));
+            final AlertDialog dialog = builder.create();
             dialog.show();
         });
 

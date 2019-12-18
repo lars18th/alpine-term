@@ -58,8 +58,7 @@ import alpine.term.emulator.TerminalSession.SessionChangedCallback;
  * Optionally may hold a wake and a wifi lock, in which case that is shown in the notification - see
  * {@link #buildNotification()}.
  */
-@SuppressWarnings("WeakerAccess")
-public final class TerminalService extends Service implements SessionChangedCallback {
+public class TerminalService extends Service implements SessionChangedCallback {
 
     private static final String INTENT_ACTION_SERVICE_STOP = "alpine.term.ACTION_STOP_SERVICE";
     private static final String INTENT_ACTION_WAKELOCK_ENABLE = "alpine.term.ACTION_ENABLE_WAKELOCK";

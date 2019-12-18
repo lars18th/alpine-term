@@ -45,7 +45,6 @@ import alpine.term.terminal_view.TerminalView;
  * A view showing extra keys (such as Escape, Ctrl, Alt) not normally available on an Android soft
  * keyboard.
  */
-@SuppressWarnings("WeakerAccess")
 public final class ExtraKeysView extends GridLayout {
 
     private static final int TEXT_COLOR = 0xFFFFFFFF;
