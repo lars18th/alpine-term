@@ -38,6 +38,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -573,11 +574,15 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
             try (InputStream in = getAssets().open("color_schemes/" + fileName)) {
                 props.load(in);
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(Config.APP_LOG_TAG, "failed to load color scheme file '" + fileName + "' from assets", e);
             }
         }
 
-        TerminalColors.COLOR_SCHEME.updateWith(props);
+        try {
+            TerminalColors.COLOR_SCHEME.updateWith(props);
+        } catch (Exception e) {
+            Log.e(Config.APP_LOG_TAG, "failed to update terminal color scheme", e);
+        }
 
         if (mTermService != null) {
             for (TerminalSession session : mTermService.getSessions()) {
