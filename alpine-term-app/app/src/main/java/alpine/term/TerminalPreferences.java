@@ -33,16 +33,19 @@ final class TerminalPreferences {
     private static final String SHOW_EXTRA_KEYS_KEY = "show_extra_keys";
     private static final String BACK_IS_ESCAPE = "back_is_escape";
     private static final String IGNORE_BELL = "ignore_bell";
+    private static final String COLOR_SCHEME = "color_scheme";
 
     private boolean mShowExtraKeys;
     private boolean mBackIsEscape;
     private boolean mIgnoreBellCharacter;
+    private String mColorScheme;
 
     public TerminalPreferences(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         mShowExtraKeys = prefs.getBoolean(SHOW_EXTRA_KEYS_KEY, true);
         mBackIsEscape = prefs.getBoolean(BACK_IS_ESCAPE, false);
         mIgnoreBellCharacter = prefs.getBoolean(IGNORE_BELL, false);
+        mColorScheme = prefs.getString(COLOR_SCHEME, "Default");
     }
 
     public static void storeCurrentSession(Context context, TerminalSession session) {
@@ -86,5 +89,14 @@ final class TerminalPreferences {
     public void setIgnoreBellCharacter(Context context, boolean newValue) {
         mIgnoreBellCharacter = newValue;
         PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(IGNORE_BELL, newValue).apply();
+    }
+
+    public void setColorScheme(Context context, String name) {
+        mColorScheme = name;
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(COLOR_SCHEME, name).apply();
+    }
+
+    public String getColorScheme() {
+        return mColorScheme;
     }
 }

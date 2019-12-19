@@ -22,13 +22,11 @@ package alpine.term;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -40,7 +38,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -58,14 +55,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -92,8 +90,6 @@ import alpine.term.terminal_view.TerminalView;
  * about memory leaks.
  */
 public final class TerminalActivity extends Activity implements ServiceConnection {
-
-    public static final String INTENT_ACTION_RELOAD_STYLING = "alpine.term.RELOAD_TERMINAL_STYLING";
 
     private static final int CONTEXTMENU_SHOW_HELP = 0;
     private static final int CONTEXTMENU_SELECT_URL_ID = 1;
@@ -140,15 +136,6 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
      */
     private boolean mIsVisible;
 
-    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (mIsVisible && INTENT_ACTION_RELOAD_STYLING.equals(intent.getAction())) {
-                reloadTerminalStyling();
-            }
-        }
-    };
-
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -178,6 +165,8 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
 
         mTerminalView.setKeepScreenOn(true);
         mTerminalView.requestFocus();
+        mTerminalView.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Inconsolata-LGC.otf"));
+        reloadTerminalStyling();
 
         final ViewPager viewPager = findViewById(R.id.viewpager);
         if (mSettings.isExtraKeysEnabled()) viewPager.setVisibility(View.VISIBLE);
@@ -270,8 +259,6 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         if (!bindService(serviceIntent, this, 0)) {
             throw new RuntimeException("bindService() failed");
         }
-
-        reloadTerminalStyling();
     }
 
     @Override
@@ -285,8 +272,6 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
             mListViewAdapter.notifyDataSetChanged();
         }
 
-        registerReceiver(mBroadcastReceiver, new IntentFilter(INTENT_ACTION_RELOAD_STYLING));
-
         // The current terminal session may have changed while being away, force
         // a refresh of the displayed terminal:
         mTerminalView.onScreenUpdated();
@@ -299,7 +284,6 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         TerminalSession currentSession = mTerminalView.getCurrentSession();
         if (currentSession != null) TerminalPreferences.storeCurrentSession(this, currentSession);
         getDrawer().closeDrawers();
-        unregisterReceiver(mBroadcastReceiver);
     }
 
     @Override
@@ -339,7 +323,7 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
                 startActivity(new Intent(this, HelpActivity.class));
                 return true;
             case CONTEXTMENU_CONSOLE_STYLE:
-                startActivity(new Intent(this, TerminalStylingActivity.class));
+                terminalStylingDialog();
                 return true;
             case CONTEXTMENU_SELECT_URL_ID:
                 showUrlSelection();
@@ -581,34 +565,89 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
      * Reload terminal color scheme and background.
      */
     private void reloadTerminalStyling() {
-        try {
-            File fontFile = new File(getApplicationContext().getFilesDir().getAbsolutePath() + "/console_font.ttf");
-            File colorsFile = new File(getApplicationContext().getFilesDir().getAbsolutePath() + "/console_colors.prop");
+        String fileName = mSettings.getColorScheme();
 
-            final Properties props = new Properties();
-            if (colorsFile.isFile()) {
-                try (InputStream in = new FileInputStream(colorsFile)) {
-                    props.load(in);
-                }
+        Properties props = new Properties();
+
+        if (!fileName.equals("Default")) {
+            try (InputStream in = getAssets().open("color_schemes/" + fileName)) {
+                props.load(in);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-            TerminalColors.COLOR_SCHEME.updateWith(props);
-
-            if (mTermService != null) {
-                for (TerminalSession session : mTermService.getSessions()) {
-                    if (session != null && session.getEmulator() != null) {
-                        session.getEmulator().mColors.reset();
-                    }
-                }
-            }
-
-            updateBackgroundColor();
-
-            final Typeface newTypeface = (fontFile.exists() && fontFile.length() > 0) ? Typeface.createFromFile(fontFile) : Typeface.MONOSPACE;
-            mTerminalView.setTypeface(newTypeface);
-        } catch (Exception e) {
-            Log.e(Config.APP_LOG_TAG, "failed to reload terminal styling", e);
         }
+
+        TerminalColors.COLOR_SCHEME.updateWith(props);
+
+        if (mTermService != null) {
+            for (TerminalSession session : mTermService.getSessions()) {
+                if (session != null && session.getEmulator() != null) {
+                    session.getEmulator().mColors.reset();
+                }
+            }
+        }
+
+        updateBackgroundColor();
+        mTerminalView.invalidate();
+    }
+
+    /**
+     * Open dialog with spinner for selecting terminal color scheme. The file name of a picked
+     * color scheme will be saved in shared preferences and loaded from assets by {@link #reloadTerminalStyling()}.
+     */
+    private void terminalStylingDialog() {
+        ArrayAdapter<String> colorsAdapter = new ArrayAdapter<>(this, R.layout.styling_dialog_item);
+
+        List<String> fileNames = new ArrayList<>();
+        fileNames.add("Default");
+
+        try {
+            fileNames.addAll(Arrays.asList(Objects.requireNonNull(getAssets().list("color_schemes"))));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<String> colorSchemes = new ArrayList<>();
+
+        for (String s : fileNames) {
+            String name = s.replace('-', ' ');
+            int dotIndex = name.lastIndexOf('.');
+            if (dotIndex != -1) name = name.substring(0, dotIndex);
+
+            boolean lastWhitespace = true;
+            char[] chars = name.toCharArray();
+
+            for (int i = 0; i < chars.length; i++) {
+                if (Character.isLetter(chars[i])) {
+                    if (lastWhitespace) {
+                        chars[i] = Character.toUpperCase(chars[i]);
+                    }
+
+                    lastWhitespace = false;
+                } else {
+                    lastWhitespace = Character.isWhitespace(chars[i]);
+                }
+            }
+
+            colorSchemes.add(new String(chars));
+        }
+
+        colorsAdapter.addAll(colorSchemes);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setSingleChoiceItems(colorsAdapter, fileNames.indexOf(mSettings.getColorScheme()), (dialogInterface, i) -> {
+            String current = fileNames.get(i);
+
+            if (current != null) {
+                showToast(getResources().getString(R.string.style_toast_theme_applied) + "\n" + colorSchemes.get(i), true);
+                mSettings.setColorScheme(this, current);
+            }
+
+            reloadTerminalStyling();
+            dialogInterface.dismiss();
+        });
+
+        builder.create().show();
     }
 
     /**
@@ -860,6 +899,12 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         if (mLastToast != null) mLastToast.cancel();
         mLastToast = Toast.makeText(TerminalActivity.this, text, longDuration ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
         mLastToast.setGravity(Gravity.TOP, 0, 0);
+
+        TextView toastText = mLastToast.getView().findViewById(android.R.id.message);
+        if (toastText != null) {
+            toastText.setGravity(Gravity.CENTER);
+        }
+
         mLastToast.show();
     }
 

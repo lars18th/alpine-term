@@ -23,7 +23,7 @@
     <string name="menu_select_url">Select URL</string>
     <string name="menu_share_transcript">Share transcript</string>
     <string name="menu_reset_terminal">Reset</string>
-    <string name="menu_console_style">Styling: change font and colors</string>
+    <string name="menu_console_style">Change terminal colors</string>
     <string name="menu_toggle_back_is_escape">Remap key \&quot;back\&quot; to \&quot;escape\&quot;</string>
     <string name="menu_toggle_ignore_bell">Ignore bell character</string>
 
@@ -40,10 +40,8 @@
     <!-- Context menu: Reset terminal toast message -->
     <string name="reset_toast_notification">Resetting terminal state…</string>
 
-    <!-- Context menu: Fonts and Colors -->
-    <string name="style_color_prompt">Choose color</string>
-    <string name="style_font_prompt">Choose font</string>
-    <string name="style_toast_install_failed">Failed to update terminal style.</string>
+    <!-- Context menu: color themes -->
+    <string name="style_toast_theme_applied">Applying color theme:</string>
 
     <!-- Drawer -->
     <string name="button_toggle_soft_keyboard">Toggle keyboard</string>

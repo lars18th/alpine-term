@@ -52,12 +52,6 @@
             android:resizeableActivity="true"
             android:label="@string/application_name" />
 
-        <activity
-            android:name=".TerminalStylingActivity"
-            android:exported="false"
-            android:noHistory="true"
-            android:theme="@style/StylingDialogTheme" />
-
         <service
             android:name=".TerminalService"
             android:exported="false" />
