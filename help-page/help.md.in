@@ -72,7 +72,7 @@ terminal. It provides menu entries for:
  - Opening URL selector dialog.
  - Sharing text from the terminal to other apps.
  - Resetting the terminal state if it got messed up.
- - Selecting a font or color scheme of the terminal.
+ - Selecting a color scheme of the terminal.
  - Checkbox to control whether back key should send ESC.
  - Checkbox to control whether bell characters should be ignored.
 
