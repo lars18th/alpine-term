@@ -321,7 +321,7 @@ public class TerminalService extends Service implements SessionChangedCallback {
         processArgs.add("-nographic");
 
         // Use graphics adapter but have VNC disabled by default.
-        processArgs.addAll(Arrays.asList("-device", "virtio-vga,id=virtio-vga-pci0", "-vnc", "none"));
+        processArgs.addAll(Arrays.asList("-device", "VGA,id=vga-pci0,vgamem_mb=32", "-vnc", "none"));
 
         // Use usb tablet as pointer device as PS/2 mouse has issues with VNC.
         processArgs.addAll(Arrays.asList("-device", "qemu-xhci,id=qemu-xhci-pci0"));
