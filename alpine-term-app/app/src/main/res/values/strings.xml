@@ -19,6 +19,7 @@
     <string name="menu_more">More…</string>
 
     <!-- Context menu: more -->
+    <string name="menu_vnc_viewer">Open VNC client</string>
     <string name="menu_show_help">Show help</string>
     <string name="menu_select_url">Select URL</string>
     <string name="menu_share_transcript">Share transcript</string>
@@ -26,6 +27,10 @@
     <string name="menu_console_style">Change terminal colors</string>
     <string name="menu_toggle_back_is_escape">Remap key \&quot;back\&quot; to \&quot;escape\&quot;</string>
     <string name="menu_toggle_ignore_bell">Ignore bell character</string>
+
+    <!-- Context menu: Open VNC client toast messages -->
+    <string name="open_vnc_config_failure">Failed to configure VNC server</string>
+    <string name="open_vnc_intent_failure">Failed to launch VNC client</string>
 
     <!-- Context menu: Select URL dialog -->
     <string name="select_url_dialog_title">Click URL to copy or long press to open:</string>

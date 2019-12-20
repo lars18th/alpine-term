@@ -28,6 +28,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -58,6 +60,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -92,14 +95,15 @@ import alpine.term.terminal_view.TerminalView;
  */
 public final class TerminalActivity extends Activity implements ServiceConnection {
 
-    private static final int CONTEXTMENU_SHOW_HELP = 0;
-    private static final int CONTEXTMENU_SELECT_URL_ID = 1;
-    private static final int CONTEXTMENU_SHARE_TRANSCRIPT_ID = 2;
-    private static final int CONTEXTMENU_PASTE_ID = 3;
-    private static final int CONTEXTMENU_RESET_TERMINAL_ID = 4;
-    private static final int CONTEXTMENU_CONSOLE_STYLE = 5;
-    private static final int CONTEXTMENU_TOGGLE_BACK_IS_ESCAPE = 6;
-    private static final int CONTEXTMENU_TOGGLE_IGNORE_BELL = 7;
+    private static final int CONTEXTMENU_VNC_VIEWER = 0;
+    private static final int CONTEXTMENU_SHOW_HELP = 1;
+    private static final int CONTEXTMENU_SELECT_URL_ID = 2;
+    private static final int CONTEXTMENU_SHARE_TRANSCRIPT_ID = 3;
+    private static final int CONTEXTMENU_PASTE_ID = 4;
+    private static final int CONTEXTMENU_RESET_TERMINAL_ID = 5;
+    private static final int CONTEXTMENU_CONSOLE_STYLE = 6;
+    private static final int CONTEXTMENU_TOGGLE_BACK_IS_ESCAPE = 7;
+    private static final int CONTEXTMENU_TOGGLE_IGNORE_BELL = 8;
 
     private final int MAX_FONTSIZE = 256;
     private int MIN_FONTSIZE;
@@ -306,6 +310,18 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
             return;
         }
 
+        PackageManager pm = getPackageManager();
+
+        try {
+            PackageInfo info = pm.getPackageInfo("com.realvnc.viewer.android", PackageManager.GET_META_DATA);
+
+            if (info.packageName.equals("com.realvnc.viewer.android")) {
+                menu.add(Menu.NONE, CONTEXTMENU_VNC_VIEWER, Menu.NONE, R.string.menu_vnc_viewer);
+            }
+        } catch (Exception e) {
+            Log.i(Config.APP_LOG_TAG, "VNC viewer is not installed");
+        }
+
         menu.add(Menu.NONE, CONTEXTMENU_SHOW_HELP, Menu.NONE, R.string.menu_show_help);
         menu.add(Menu.NONE, CONTEXTMENU_SELECT_URL_ID, Menu.NONE, R.string.menu_select_url);
         menu.add(Menu.NONE, CONTEXTMENU_SHARE_TRANSCRIPT_ID, Menu.NONE, R.string.menu_share_transcript);
@@ -320,6 +336,39 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         TerminalSession session = mTerminalView.getCurrentSession();
 
         switch (item.getItemId()) {
+            case CONTEXTMENU_VNC_VIEWER: {
+                    int vncPort = -1;
+
+                    for (int i=0; i<32; i++) {
+                        try (ServerSocket sock = new ServerSocket(5900 + i)) {
+                            sock.setReuseAddress(true);
+                            vncPort = sock.getLocalPort();
+                            break;
+                        } catch (Exception e) {
+                            Log.w(Config.APP_LOG_TAG, "cannot acquire port " + (5900 + i) + " for VNC", e);
+                        }
+                    }
+
+                    if (vncPort == -1) {
+                        showToast(getResources().getString(R.string.open_vnc_config_failure), true);
+                        Log.e(Config.APP_LOG_TAG, "failed to found a suitable port for VNC server");
+                    } else {
+                        int vncDisplay = vncPort - 5900;
+
+                        mTermService.getSessions().get(0).write("change vnc 127.0.0.1:" + vncDisplay + "\n");
+
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnc://127.0.0.1:" + vncPort));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                        try {
+                            startActivity(intent);
+                        } catch (Exception e) {
+                            showToast(getResources().getString(R.string.open_vnc_intent_failure), true);
+                            Log.e(Config.APP_LOG_TAG, "failed to start intent", e);
+                        }
+                    }
+                }
+                return true;
             case CONTEXTMENU_SHOW_HELP:
                 startActivity(new Intent(this, HelpActivity.class));
                 return true;

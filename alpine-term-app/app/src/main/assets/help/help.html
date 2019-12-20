@@ -398,6 +398,7 @@ page-break-after: avoid;
 <h4 id="context-menu">Context menu</h4>
 <p>The context menu can be shown by long pressing anywhere on the terminal. It provides menu entries for:</p>
 <ul>
+<li>Opening VNC connection (only if RealVNC Viewer is installed).</li>
 <li>Copying or pasting text from clipboard.</li>
 <li>Showing this help page.</li>
 <li>Opening URL selector dialog.</li>
@@ -651,12 +652,11 @@ change vnc password</code></pre>
 <p>If program still fails, make sure that Xorg is running.</p></li>
 <li><p>When launching GIMP or other program using D-Bus, it may complain about missing machine-id. You can generate it with this command:</p>
 <pre><code>dbus-uuidgen &gt; /var/lib/dbus/machine-id</code></pre></li>
-<li><p>If your VNC client application closes immediately after opening connection or tells that protocol is invalid:</p>
+<li><p>If your VNC client application shows an error:</p>
 <ul>
 <li>Ensure that VNC server is running.</li>
 <li>Ensure that you are connecting to the right port.</li>
 <li>Try a different VNC client.</li>
-<li>Try to reboot and connect with VNC client before launching Xorg.</li>
 </ul></li>
 </ol>
 <hr />

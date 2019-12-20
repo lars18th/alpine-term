@@ -67,6 +67,7 @@ of five functional elements such as [context menu](#context-menu),
 The context menu can be shown by long pressing anywhere on the
 terminal. It provides menu entries for:
 
+ - Opening VNC connection (only if RealVNC Viewer is installed).
  - Copying or pasting text from clipboard.
  - Showing this help page.
  - Opening URL selector dialog.
@@ -512,13 +513,11 @@ to inspect a log file of the X server.
    dbus-uuidgen > /var/lib/dbus/machine-id
    ```
 
-3. If your VNC client application closes immediately after opening
-   connection or tells that protocol is invalid:
+3. If your VNC client application shows an error:
 
    - Ensure that VNC server is running.
    - Ensure that you are connecting to the right port.
    - Try a different VNC client.
-   - Try to reboot and connect with VNC client before launching Xorg.
 
 ***
 
