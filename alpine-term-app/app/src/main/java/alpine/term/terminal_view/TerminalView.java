@@ -36,7 +36,6 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.accessibility.AccessibilityManager;
 import android.view.ActionMode;
 import android.view.HapticFeedbackConstants;
 import android.view.InputDevice;
@@ -51,6 +50,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityManager;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
@@ -63,6 +63,7 @@ import alpine.term.emulator.KeyHandler;
 import alpine.term.emulator.TerminalBuffer;
 import alpine.term.emulator.TerminalEmulator;
 import alpine.term.emulator.TerminalSession;
+import alpine.term.emulator.WcWidth;
 
 /** View displaying and interacting with a {@link TerminalSession}. */
 public final class TerminalView extends View {
@@ -233,7 +234,12 @@ public final class TerminalView extends View {
         });
         mScroller = new Scroller(context);
         AccessibilityManager am = (AccessibilityManager) context.getSystemService(Context.ACCESSIBILITY_SERVICE);
-        mAccessibilityEnabled = am.isEnabled();
+
+        if (am != null) {
+            mAccessibilityEnabled = am.isEnabled();
+        } else {
+            mAccessibilityEnabled = false;
+        }
     }
 
     /**
@@ -420,8 +426,8 @@ public final class TerminalView extends View {
         }
 
         mEmulator.clearScrollCounter();
-        if (mAccessibilityEnabled) setContentDescription(getText());
         invalidate();
+        if (mAccessibilityEnabled) setContentDescription(getText());
     }
 
     /**
@@ -757,7 +763,6 @@ public final class TerminalView extends View {
         } else {
             mRenderer.render(mEmulator, canvas, mTopRow, mSelY1, mSelY2, mSelX1, mSelX2);
 
-
             SelectionModifierCursorController selectionController = getSelectionController();
             if (selectionController != null && selectionController.isActive()) {
                 selectionController.updatePosition();
@@ -900,7 +905,6 @@ public final class TerminalView extends View {
         private final int mOrigOrient;
         private int mOrientation;
 
-
         public static final int LEFT = 0;
         public static final int RIGHT = 2;
         private int mHandleHeight;
@@ -948,11 +952,9 @@ public final class TerminalView extends View {
                     mHotspotX = handleWidth / 4;
                     break;
                 }
-
             }
 
             mHandleHeight = mDrawable.getIntrinsicHeight();
-
             mHandleWidth = handleWidth;
             mTouchOffsetY = -mHandleHeight * 0.3f;
             mHotspotY = 0;
@@ -994,6 +996,9 @@ public final class TerminalView extends View {
         }
 
         private void checkChangedOrientation() {
+            if (!mIsDragging) {
+                return;
+            }
             long millis = SystemClock.currentThreadTimeMillis();
             if (millis - mLastTime < 50) {
                 return;
@@ -1109,7 +1114,6 @@ public final class TerminalView extends View {
             int height = mDrawable.getIntrinsicHeight();
             mDrawable.setBounds(0, 0, drawWidth, height);
             mDrawable.draw(c);
-
         }
 
         @SuppressLint("ClickableViewAccessibility")
@@ -1138,7 +1142,6 @@ public final class TerminalView extends View {
                     final float newPosY = rawY - mTouchToWindowOffsetY + mHotspotY + mTouchOffsetY;
 
                     mController.updatePosition(this, Math.round(newPosX), Math.round(newPosY));
-
 
                     break;
                 }
@@ -1173,7 +1176,6 @@ public final class TerminalView extends View {
         SelectionModifierCursorController() {
             mStartHandle = new HandleView(this, HandleView.LEFT);
             mEndHandle = new HandleView(this, HandleView.RIGHT);
-
             mHandleHeight = Math.max(mStartHandle.mHandleHeight, mEndHandle.mHandleHeight);
         }
 
@@ -1241,7 +1243,6 @@ public final class TerminalView extends View {
                 @Override
                 public void onDestroyActionMode(ActionMode mode) {
                 }
-
             };
 
             mActionMode = startActionMode(new ActionMode.Callback2() {
@@ -1272,7 +1273,6 @@ public final class TerminalView extends View {
                     int y1 = Math.round((mSelY1 - mTopRow) * mRenderer.mFontLineSpacing);
                     int y2 = Math.round((mSelY2 + 1 - mTopRow) * mRenderer.mFontLineSpacing);
 
-
                     if (x1 > x2) {
                         int tmp = x1;
                         x1 = x2;
@@ -1292,7 +1292,6 @@ public final class TerminalView extends View {
                 // This will hide the mSelectionModifierCursorController
                 mActionMode.finish();
             }
-
         }
 
         public boolean isActive() {
@@ -1300,18 +1299,9 @@ public final class TerminalView extends View {
         }
 
         public void updatePosition(HandleView handle, int x, int y) {
-            final int scrollRows = mEmulator.getScreen().getActiveRows() - mEmulator.mRows;
-            if (y < mRenderer.mFontLineSpacing) {//up
-                mTopRow--;
-                if (mTopRow < -scrollRows) {
-                    mTopRow = -scrollRows;
-                }
-            } else if (y + 2 * mRenderer.mFontLineSpacing > TerminalView.this.getHeight()) {//down
-                mTopRow++;
-                if (mTopRow > 0) {
-                    mTopRow = 0;
-                }
-            }
+
+            TerminalBuffer screen = mEmulator.getScreen();
+            final int scrollRows = screen.getActiveRows() - mEmulator.mRows;
             if (handle == mStartHandle) {
                 mSelX1 = getCursorX(x);
                 mSelY1 = getCursorY(y);
@@ -1323,13 +1313,26 @@ public final class TerminalView extends View {
                 } else if (mSelY1 > mEmulator.mRows - 1) {
                     mSelY1 = mEmulator.mRows - 1;
                 }
-
                 if (mSelY1 > mSelY2) {
                     mSelY1 = mSelY2;
                 }
                 if (mSelY1 == mSelY2 && mSelX1 > mSelX2) {
                     mSelX1 = mSelX2;
                 }
+                if (!mEmulator.isAlternateBufferActive()) {
+                    if (mSelY1 <= mTopRow) {
+                        mTopRow--;
+                        if (mTopRow < -scrollRows) {
+                            mTopRow = -scrollRows;
+                        }
+                    } else if (mSelY1 >= mTopRow + mEmulator.mRows) {
+                        mTopRow++;
+                        if (mTopRow > 0) {
+                            mTopRow = 0;
+                        }
+                    }
+                }
+                mSelX1 = getValidCurX(screen, mSelY1, mSelX1);
             } else {
                 mSelX2 = getCursorX(x);
                 mSelY2 = getCursorY(y);
@@ -1341,16 +1344,60 @@ public final class TerminalView extends View {
                 } else if (mSelY2 > mEmulator.mRows - 1) {
                     mSelY2 = mEmulator.mRows - 1;
                 }
-
                 if (mSelY1 > mSelY2) {
                     mSelY2 = mSelY1;
                 }
                 if (mSelY1 == mSelY2 && mSelX1 > mSelX2) {
                     mSelX2 = mSelX1;
                 }
+                if (!mEmulator.isAlternateBufferActive()) {
+                    if (mSelY2 <= mTopRow) {
+                        mTopRow--;
+                        if (mTopRow < -scrollRows) {
+                            mTopRow = -scrollRows;
+                        }
+                    } else if (mSelY2 >= mTopRow + mEmulator.mRows) {
+                        mTopRow++;
+                        if (mTopRow > 0) {
+                            mTopRow = 0;
+                        }
+                    }
+                }
+                mSelX2 = getValidCurX(screen, mSelY2, mSelX2);
             }
 
             invalidate();
+        }
+
+        private int getValidCurX(TerminalBuffer screen, int cy, int cx) {
+            String line = screen.getSelectedText(0, cy, cx, cy);
+            if (!TextUtils.isEmpty(line)) {
+                int col = 0;
+                for (int i = 0, len = line.length(); i < len; i++) {
+                    char ch1 = line.charAt(i);
+                    if (ch1 == 0) {
+                        break;
+                    }
+
+                    int wc;
+                    if (Character.isHighSurrogate(ch1) && i + 1 < len) {
+                        char ch2 = line.charAt(++i);
+                        wc = WcWidth.width(Character.toCodePoint(ch1, ch2));
+                    } else {
+                        wc = WcWidth.width(ch1);
+                    }
+
+                    final int cend = col + wc;
+                    if (cx > col && cx < cend) {
+                        return cend;
+                    }
+                    if (cend == col) {
+                        return col;
+                    }
+                    col = cend;
+                }
+            }
+            return cx;
         }
 
         public void updatePosition() {
@@ -1359,18 +1406,27 @@ public final class TerminalView extends View {
             }
 
             mStartHandle.positionAtCursor(mSelX1, mSelY1);
-
-            mEndHandle.positionAtCursor(mSelX2 + 1, mSelY2);
+            mEndHandle.positionAtCursor(mSelX2 + 1, mSelY2); //bug
 
             if (mActionMode != null) {
                 mActionMode.invalidate();
             }
-
         }
 
         public boolean onTouchEvent(MotionEvent event) {
 
             return false;
+        }
+
+        /**
+         * @return true if this controller is currently used to move the selection start.
+         */
+        public boolean isSelectionStartDragged() {
+            return mStartHandle.isDragging();
+        }
+
+        public boolean isSelectionEndDragged() {
+            return mEndHandle.isDragging();
         }
 
         public void onTouchModeChanged(boolean isInTouchMode) {
@@ -1411,7 +1467,7 @@ public final class TerminalView extends View {
 
         getSelectionController().show();
         mIsSelectingText = true;
-        mClient.copyModeChanged(true);
+        mClient.copyModeChanged(mIsSelectingText);
         invalidate();
     }
 
@@ -1420,11 +1476,10 @@ public final class TerminalView extends View {
             hideSelectionModifierCursorController();
             mSelX1 = mSelY1 = mSelX2 = mSelY2 = -1;
             mIsSelectingText = false;
-            mClient.copyModeChanged(false);
+            mClient.copyModeChanged(mIsSelectingText);
             invalidate();
         }
     }
-
 
     private final Runnable mShowFloatingToolbar = new Runnable() {
         @Override
