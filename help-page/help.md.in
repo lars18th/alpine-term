@@ -1,8 +1,8 @@
 % Alpine Term
 
-This is a terminal emulator and a Linux environment application using
-the [QEMU](https://qemu.org) to run the [Alpine Linux](https://alpinelinux.org)
-distribution.
+This is an application for Android OS running the [Alpine Linux](https://alpinelinux.org)
+distribution in emulated x86_64 machine. Basically a compound of
+terminal emulator and headless build of the [QEMU](https://qemu.org).
 
 *Inspired by [Termux](https://github.com/termux/termux-app) and
 [UserLAnd](https://github.com/CypherpunkArmory/UserLAnd) applications.*
@@ -18,7 +18,7 @@ Table of contents:
    - [Navigation drawer](#navigation-drawer)
    - [Notification](#notification)
    - [Extra keys row](#extra-keys-row)
-   - [Text input view](#text-input-view)
+   - [Text input field](#text-input-field)
  - [Getting started](#getting-started)
    - [Terminal](#terminal)
    - [Touch keyboard shortcuts](#touch-keyboard-shortcuts)
@@ -46,28 +46,22 @@ Additional resources for reading:
 
  - [mksh(1)](doc/mksh.html)
 
-   Manual page for mksh which is used as default system shell.
+   Manual page for mksh which is set as default login shell.
 
  - [QEMU monitor reference](doc/qemu-doc.html#pcsys_005fmonitor)
 
-   Information about commands used to control QEMU state. Some commands are
-   not available for the QEMU build running inside the Alpine Term.
+   Information about commands used to control the virtual machine state.
 
 ***
 
 ### User interface
-
-Application interface is simple and besides the terminal it consists
-of five functional elements such as [context menu](#context-menu),
-[navigation drawer](#navigation-drawer), [notification](#notification),
-[extra keys row](#extra-keys-row) and [text input view](#text-input-view).
-
 #### Context menu
 
 The context menu can be shown by long pressing anywhere on the
 terminal. It provides menu entries for:
 
- - Opening VNC connection (only if RealVNC Viewer is installed).
+ - Opening VNC connection. Only if [RealVNC Viewer](https://play.google.com/store/apps/details?id=com.realvnc.viewer.android)
+   is installed.
  - Copying or pasting text from clipboard.
  - Showing this help page.
  - Opening URL selector dialog.
@@ -88,7 +82,7 @@ part of screen.
 
 It contains few additional elements:
 
- 1. The list of sessions: click on a specific session to open it in the terminal.
+ 1. The list of sessions: click on a session to open.
  2. The button to toggle visibility of a touch keyboard.
     <br>Long press will toggle the [extra keys row](#extra-keys-row) (3).
 
@@ -98,13 +92,14 @@ It contains few additional elements:
   <img alt="Notification screenshot" src="img/app_notification.png" style="width:90%;max-width:700px;">
 </span>
 
-Alpine Term displays the notification while it is running. It can be expanded
-by a pinch-zooming or a single-finger glide gestures to expose some actions:
+While Alpine Term is running, it displays a notification which can be
+expanded by a pinch-zooming or a single-finger glide gestures to expose
+some actions:
 
  1. Immediately exit the application.
  2. Start a wake lock to prevent device's CPU going into sleep mode.
 
-Clicking on the notification will open a current terminal session.
+Clicking on the notification will open the current terminal session.
 
 #### Extra keys row
 
@@ -112,30 +107,29 @@ Clicking on the notification will open a current terminal session.
   <img alt="Extra keys row screenshot" src="img/extra_keys_row.png" style="width:90%;max-width:700px;">
 </span>
 
-The extra keys row provide a quick access to some buttons frequently used
-in shell sessions. It can be toggled by either a long press on the keyboard
-button located in the [navigation drawer](#navigation-drawer) or by
-**Volume Up+Q** and **Volume Up+K** key combinations.
+Alpine Term provides a row which contains some keys frequently used
+to interact with the command line. It can be toggled by either a long
+press on the keyboard button located on [drawer](#navigation-drawer)
+or by **Volume Up+Q** and **Volume Up+K** key combinations.
 
-Certain buttons expose alternate keys by swiping them up. Particularly:
+Swiping up certain keys will expose the alternate ones. Particularly:
 
  - `-` will show a key for `_`
  - `/` will show a key for `\`
  - `|` will show a key for `&`
  - `>` will show a key for `<`
 
-#### Text input view
+#### Text input field
 
 <span style="display:block;text-align:center">
-  <img alt="Text input view screenshot" src="img/alt_text_input.png" style="width:90%;max-width:700px;">
+  <img alt="Text input field screenshot" src="img/alt_text_input.png" style="width:90%;max-width:700px;">
 </span>
 
-Terminal view does not support advanced features of the touch keyboards
-like a predictive input or swipe typing. To solve this, Alpine Term has
-the text input view where all these features work correctly. Just enter
-your text into that field and it will get pasted to the terminal.
-
-You can access this text input view by swiping left the [extra keys row](#extra-keys-row).
+Terminal does not support advanced features of the touch keyboards
+like a predictive input or swipe typing. As workaround, application
+provide a special text input field where all these features work
+correctly. It can be accessed by swiping the [extra keys row](#extra-keys-row)
+to the left side.
 
 ***
 
@@ -143,13 +137,17 @@ You can access this text input view by swiping left the [extra keys row](#extra-
 #### Terminal
 
 Application emulates a subset of the X Window System (`xterm`) terminal.
-Its capabilities should be enough for interacting with majority of the
-available command line programs.
+Its capabilities should be enough for most of the available command line
+programs.
 
-However, since the terminal is used only as frontend for serial lines
-(ttyS0-ttyS3) exposed by QEMU, it does not support automatic window
-resizing. So, after changing font size you will need to execute the
-command 'resize', otherwise text may get messed.
+Terminal acts as client to the serial line exposed by virtual machine.
+As result, virtual machine is not aware of current state of the console.
+You may observe visual glitches such as displaced or disappeared
+text when changing font size.
+
+Use utility 'resize' to make sure that console size matches the size of
+screen. If terminal was messed up, use the utility 'reset' which will
+clean screen and reset terminal to initial state.
 
 <span style="display:block;text-align:center">
   <img alt="QEMU session screenshot" src="img/qemu_session.png" style="width:90%;max-width:700px;">
@@ -160,24 +158,23 @@ will change the font size and short tap will act as a mouse click. Long
 tap will toggle a text selection and the [context menu](#context-menu).
 
 Alpine Term provides a fixed amount of persistent non-closeable terminal
-sessions, each of them has its own purpose.
-
-The first session is the QEMU monitor which gives you full control over
-QEMU's internal state.
+sessions. Each of them has specific purpose. The first session is the
+QEMU monitor which gives you full control over VM's internal state.
 
 <span style="display:block;text-align:center">
   <img alt="QEMU monitor screenshot" src="img/qemu_monitor.png" style="width:90%;max-width:700px;">
 </span>
 
-Other four sessions are attached serial lines providing access to the
-operating system.
+Other four sessions are serial lines (ttyS0 - ttyS3) providing access
+to the operating system. As stated before, amount of sessions is fixed.
+To have more shell sessions you will need a terminal multiplexer which
+is not installed by default.
 
 #### Touch keyboard shortcuts
 
-**Volume Down** button emulates **Ctrl** key which is frequently used
-with others to request special action from command line tools. Common
-key combinations are:
-
+**Volume Down** button emulates **Ctrl** key which can be combined with
+others to request a special action from command line tools. Common key
+combinations are:
 
  - **Ctrl+A** → Move cursor to the beginning of line
  - **Ctrl+C** → Interrupt the current process with SIGINT
@@ -194,10 +191,10 @@ combinations:
  - **Volume Up+1** → F1 (and **Volume Up+2** → F2, etc)
  - **Volume Up+0** → F10
  - **Volume Up+A** → Left arrow key
- - **Volume Up+B** → Alt+B, back a word when using readline
+ - **Volume Up+B** → Alt+B, back a word (if using readline)
  - **Volume Up+D** → Right arrow key
  - **Volume Up+E** → Escape key
- - **Volume Up+F** → Alt+F, forward a word when using readline
+ - **Volume Up+F** → Alt+F, forward a word (if using readline)
  - **Volume Up+H** → ~ (the tilde character)
  - **Volume Up+K** → Alias for **Volume Up+Q**
  - **Volume Up+L** → | (the pipe character)
@@ -210,6 +207,9 @@ combinations:
  - **Volume Up+V** → Show the volume control
  - **Volume Up+W** → Up arrow key
  - **Volume Up+X** → Alt+X
+
+Note that **Volume Up** does not represent **Alt** key even though it
+is able to emulate some its combinations.
 
 #### Hardware keyboard shortcuts
 
@@ -292,8 +292,8 @@ hostfwd_remove tcp::10022
 
 #### Increasing size of root partition
 
-Alpine Term provides the disk image with maximal size of 128 GB. However
-the root partition has size of 4 GB to prevent the growing disk image from
+Alpine Term provides the disk image with maximal size of 128 GiB. However
+the root partition has size of 4 GiB to prevent the growing disk image from
 consuming all device's memory. You can extend the root partition with 'fdisk'
 as shown in this guide.
 
@@ -311,7 +311,7 @@ Steps that you need to perform:
  5. Ensure that boot flag is turned on for the root partition.
  6. Write changes.
 
-A transcript of 'fdisk' session for increasing root device size to 8 GB:
+A transcript of 'fdisk' session for increasing root device size to 8 GiB:
 
 ~~~~ {#fdisk-transcript .numberLines startFrom="1"}
 ~ # fdisk /dev/sda
@@ -361,8 +361,8 @@ fdisk: WARNING: rereading partition table failed, kernel still uses old table: R
 ~~~~
 
 After finishing with fdisk you need to reboot. Then you will be able
-to resize file system to the partition's maximum (requires package
-'e2fsprogs-extra'):
+to resize file system according to the new size of partition (requires
+package 'e2fsprogs-extra'):
 ```
 resize2fs /dev/sda1
 ```
@@ -413,9 +413,8 @@ Created snapshots may be loaded at any time with the next command:
 loadvm your_snapshot_name
 ```
 
-Note that both commands will freeze console during operation. Also
-each snapshot consumes certain amount of space on host internal
-storage.
+Note that both commands will freeze console during operation. Do
+not interrupt application until operation will not be finished.
 
 #### Sharing files between host and VM
 
