@@ -170,7 +170,7 @@ builder_step_configure() {
 	if [ -f "$PACKAGE_SRCDIR/CMakeLists.txt" ]; then
 		termux_setup_cmake
 
-		local BUILD_TYPE=MinSizeRel
+		local BUILD_TYPE=Release
 		if [ "$CONFIG_BUILDER_DEBUG" = "true" ]; then
 			BUILD_TYPE=Debug
 		fi
@@ -526,7 +526,7 @@ while (($# > 0)); do
 		if [ -n "$CONFIG_BUILDER_DEBUG" ]; then
 			CFLAGS+=" -g3 -O1"
 		else
-			CFLAGS+=" -Oz"
+			CFLAGS+=" -O2 -ftree-vectorize"
 		fi
 
 		if [ "$PACKAGE_TARGET_ARCH" = "arm" ]; then
