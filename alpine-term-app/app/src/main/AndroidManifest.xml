@@ -26,11 +26,12 @@
         <meta-data android:name="android.max_aspect" android:value="10.0" />
 
         <meta-data android:name="com.sec.android.support.multiwindow" android:value="true" />
+        <meta-data android:name="com.samsung.android.multidisplay.keep_process_alive" android:value="true"/>
 
         <activity
             android:name=".TerminalActivity"
             android:label="@string/application_name"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:configChanges="orientation|screenSize|smallestScreenSize|density|screenLayout|uiMode|keyboard|keyboardHidden|navigation"
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible" >
