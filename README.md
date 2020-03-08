@@ -22,6 +22,11 @@ requirements:
  - Android 7.0 or higher.
  - At least 1 GB of space on the internal storage.
 
+## Extra packages
+
+Check the https://github.com/xeffyr/alpine-extra-ports for some additional
+packages which may not be available in Alpine official repositories.
+
 ## Credits
 
 Alpine Term relies on the source code of the following projects:
