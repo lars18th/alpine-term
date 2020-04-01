@@ -1,7 +1,7 @@
 /*
 *************************************************************************
 Alpine Term - a VM-based terminal emulator.
-Copyright (C) 2019  Leonid Plyushch <leonid.plyushch@gmail.com>
+Copyright (C) 2019-2020  Leonid Plyushch <leonid.plyushch@gmail.com>
 
 Originally was part of Termux.
 Copyright (C) 2019  Fredrik Fornwall <fredrik@fornwall.net>
