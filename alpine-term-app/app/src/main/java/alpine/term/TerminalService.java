@@ -427,9 +427,6 @@ public class TerminalService extends Service implements SessionChangedCallback {
         // Background color for small notification icon:
         builder.setColor(0xFF000000);
 
-        Intent exitIntent = new Intent(this, TerminalService.class).setAction(INTENT_ACTION_SERVICE_STOP);
-        builder.addAction(android.R.drawable.ic_delete, getResources().getString(R.string.exit_label), PendingIntent.getService(this, 0, exitIntent, 0));
-
         String newWakeAction = wakeLockHeld ? INTENT_ACTION_WAKELOCK_DISABLE : INTENT_ACTION_WAKELOCK_ENABLE;
         Intent toggleWakeLockIntent = new Intent(this, TerminalService.class).setAction(newWakeAction);
         String actionTitle = getResources().getString(wakeLockHeld ?

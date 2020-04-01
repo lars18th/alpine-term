@@ -31,6 +31,7 @@ Table of contents:
    - [Pausing the VM](#pausing-the-vm)
    - [Saving and restoring the VM state](#saving-and-restoring-the-vm-state)
    - [Sharing files between host and VM](#sharing-files-between-host-and-vm)
+   - [Shutting down the VM](#shutting-down-the-vm)
    - [Using the X Window System](#using-the-x-window-system)
 
 Additional resources for reading:
@@ -94,10 +95,8 @@ It contains few additional elements:
 
 While Alpine Term is running, it displays a notification which can be
 expanded by a pinch-zooming or a single-finger glide gestures to expose
-some actions:
-
- 1. Immediately exit the application.
- 2. Start a wake lock to prevent device's CPU going into sleep mode.
+action for toggling wake lock to prevent device's CPU going into sleep
+mode.
 
 Clicking on the notification will open the current terminal session.
 
@@ -438,6 +437,20 @@ Android applies certain restrictions on the shared storage:
 **Warning**: if you want to uninstall the Alpine Term, do not forget
 to move files from the host's shared directory to a different place.
 Otherwise all its data will be lost.
+
+#### Shutting down the VM
+
+You can shut down the virtual machine and exit application with these
+ways:
+
+ - Executing command `quit` in QEMU monitor for immediate exit. May
+   leave HDD file system in inconsistent state.
+ - Executing command `system_powerdown` in QEMU monitor to initiate
+   OS shut down through ACPI.
+ - Executing command `poweroff` in OS shell.
+
+If application got stuck and does not respond for some reason, you will
+need to force stop it through Android OS settings.
 
 #### Using the X Window System
 
