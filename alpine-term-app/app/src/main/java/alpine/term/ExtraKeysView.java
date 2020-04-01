@@ -123,8 +123,8 @@ public final class ExtraKeysView extends GridLayout {
         removeAllViews();
 
         String[][] buttons = {
-            {"―",   "/",   "|",    ">",   "HOME", "↑", "END", "PGUP"},
-            {"ESC", "TAB", "CTRL", "ALT", "←",    "↓", "→",   "PGDN"}
+            {"ESC", "INS", "―",    "|",   "HOME", "↑", "END", "PGUP"},
+            {"TAB", "DEL", "CTRL", "ALT", "←",    "↓", "→",   "PGDN"}
         };
 
         final int rows = buttons.length;
@@ -302,6 +302,12 @@ public final class ExtraKeysView extends GridLayout {
                 break;
             case "TAB":
                 keyCode = KeyEvent.KEYCODE_TAB;
+                break;
+            case "DEL":
+                keyCode = KeyEvent.KEYCODE_FORWARD_DEL;
+                break;
+            case "INS":
+                keyCode = KeyEvent.KEYCODE_INSERT;
                 break;
             case "HOME":
                 keyCode = KeyEvent.KEYCODE_MOVE_HOME;
