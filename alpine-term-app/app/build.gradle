@@ -14,8 +14,8 @@ android {
         applicationId "alpine.term"
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 931
-        versionName "9.3.1"
+        versionCode 1000
+        versionName "10.0"
 
         externalNativeBuild {
             ndkBuild {
