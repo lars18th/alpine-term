@@ -328,10 +328,10 @@ public final class ExtraKeysView extends GridLayout {
                 keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
                 break;
             case "―":
-                chars = "-";
+                keyName = "-";
                 break;
             default:
-                chars = keyName;
+                break;
         }
 
         TerminalView terminalView = view.findViewById(R.id.terminal_view);
