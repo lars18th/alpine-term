@@ -167,8 +167,7 @@ QEMU monitor which gives you full control over VM's internal state.
 
 Other four sessions are serial lines (ttyS0 - ttyS3) providing access
 to the operating system. As stated before, amount of sessions is fixed.
-To have more shell sessions you will need a terminal multiplexer which
-is not installed by default.
+To have more shell sessions you need a terminal multiplexor such as `tmux`.
 
 #### Touch keyboard shortcuts
 
@@ -299,13 +298,13 @@ as shown in this guide.
 
 Steps that you need to perform:
 
- 1. Determine a start sector. For image used with Alpine Term it is **63**.
+ 1. Determine a start sector. For image used with Alpine Term it is **2048**.
  2. Determine initial size of the partition. Image default is **4096M**.
  3. Delete the partition **sda1**.
  4. Create a new partition. You will be prompted for parameters.
-    - Set partition type to **primary**.
+    - Set partition type to **primary** (p).
     - Enter value **1** as partition number.
-    - Enter value **63** (same as in step 1) as first sector.
+    - Enter value **2048** (same as in step 1) as first sector.
     - For last sector enter desired size of the new partition (for example **+8G**).
       <br>Size should not be smaller than partition's default (see step 2).
  5. Ensure that boot flag is turned on for the root partition.
@@ -316,7 +315,7 @@ A transcript of 'fdisk' session for increasing root device size to 8 GiB:
 ~~~~ {#fdisk-transcript .numberLines startFrom="1"}
 ~ # fdisk /dev/sda
 
-The number of cylinders for this disk is set to 190650.
+The number of cylinders for this disk is set to 3532045.
 There is nothing wrong with that, but this is larger than 1024,
 and could in certain setups cause problems with:
 1) software that runs at boot time (e.g., old versions of LILO)
@@ -325,11 +324,11 @@ and could in certain setups cause problems with:
 
 Command (m for help): p
 Disk /dev/sda: 128 GB, 137438953472 bytes, 268435456 sectors
-190650 cylinders, 44 heads, 32 sectors/track
+3532045 cylinders, 76 heads, 1 sectors/track
 Units: sectors of 1 * 512 = 512 bytes
 
 Device  Boot StartCHS    EndCHS        StartLBA     EndLBA    Sectors  Size Id Type
-/dev/sda1 *  0,1,1       522,43,32           63    8388670    8388608 4096M 83 Linux
+/dev/sda1 *  0,32,33     522,75,1          2048    8390655    8388608 4096M 83 Linux
 
 Command (m for help): d
 Selected partition 1
@@ -340,19 +339,19 @@ Partition type
    e   extended
 p
 Partition number (1-4): 1
-First sector (32-268435455, default 32): 63
-Last sector or +size{,K,M,G,T} (63-268435455, default 268435455): +8G
+First sector (1-268435455, default 1): 2048
+Last sector or +size{,K,M,G,T} (2048-268435455, default 268435455): +8G
 
 Command (m for help): a
 Partition number (1-4): 1
 
 Command (m for help): p
 Disk /dev/sda: 128 GB, 137438953472 bytes, 268435456 sectors
-190650 cylinders, 44 heads, 32 sectors/track
+3532045 cylinders, 76 heads, 1 sectors/track
 Units: sectors of 1 * 512 = 512 bytes
 
 Device  Boot StartCHS    EndCHS        StartLBA     EndLBA    Sectors  Size Id Type
-/dev/sda1 *  0,1,32      1023,43,32          63   16777278   16777216 8192M 83 Linux
+/dev/sda1 *  26,72,1     1023,75,1         2048   16779263   16777216 8192M 83 Linux
 
 Command (m for help): w
 The partition table has been altered.
