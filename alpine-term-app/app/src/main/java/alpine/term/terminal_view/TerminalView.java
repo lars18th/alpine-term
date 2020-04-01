@@ -555,14 +555,6 @@ public final class TerminalView extends View {
             if (mIsSelectingText) {
                 stopTextSelectionMode();
                 return true;
-            } else if (mClient.shouldBackButtonBeMappedToEscape()) {
-                // Intercept back button to treat it as escape:
-                switch (event.getAction()) {
-                    case KeyEvent.ACTION_DOWN:
-                        return onKeyDown(keyCode, event);
-                    case KeyEvent.ACTION_UP:
-                        return onKeyUp(keyCode, event);
-                }
             }
         }
         return super.onKeyPreIme(keyCode, event);
@@ -578,7 +570,7 @@ public final class TerminalView extends View {
         if (mClient.onKeyDown(keyCode, event, mTermSession)) {
             invalidate();
             return true;
-        } else if (event.isSystem() && (!mClient.shouldBackButtonBeMappedToEscape() || keyCode != KeyEvent.KEYCODE_BACK)) {
+        } else if (event.isSystem() && (keyCode != KeyEvent.KEYCODE_BACK)) {
             return super.onKeyDown(keyCode, event);
         } else if (event.getAction() == KeyEvent.ACTION_MULTIPLE && keyCode == KeyEvent.KEYCODE_UNKNOWN) {
             mTermSession.write(event.getCharacters());

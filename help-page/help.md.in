@@ -61,7 +61,7 @@ Additional resources for reading:
 The context menu can be shown by long pressing anywhere on the
 terminal. It provides menu entries for:
 
- - Opening VNC connection. Only if [RealVNC Viewer](https://play.google.com/store/apps/details?id=com.realvnc.viewer.android)
+ - Opening VNC connection. Available only if [RealVNC Viewer](https://play.google.com/store/apps/details?id=com.realvnc.viewer.android)
    is installed.
  - Copying or pasting text from clipboard.
  - Showing this help page.
@@ -69,7 +69,6 @@ terminal. It provides menu entries for:
  - Sharing text from the terminal to other apps.
  - Resetting the terminal state if it got messed up.
  - Selecting a color scheme of the terminal.
- - Checkbox to control whether back key should send ESC.
  - Checkbox to control whether bell characters should be ignored.
 
 #### Navigation drawer

@@ -102,8 +102,7 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
     private static final int CONTEXTMENU_PASTE_ID = 4;
     private static final int CONTEXTMENU_RESET_TERMINAL_ID = 5;
     private static final int CONTEXTMENU_CONSOLE_STYLE = 6;
-    private static final int CONTEXTMENU_TOGGLE_BACK_IS_ESCAPE = 7;
-    private static final int CONTEXTMENU_TOGGLE_IGNORE_BELL = 8;
+    private static final int CONTEXTMENU_TOGGLE_IGNORE_BELL = 7;
 
     private final int MAX_FONTSIZE = 256;
     private int MIN_FONTSIZE;
@@ -327,7 +326,6 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         menu.add(Menu.NONE, CONTEXTMENU_SHARE_TRANSCRIPT_ID, Menu.NONE, R.string.menu_share_transcript);
         menu.add(Menu.NONE, CONTEXTMENU_RESET_TERMINAL_ID, Menu.NONE, R.string.menu_reset_terminal);
         menu.add(Menu.NONE, CONTEXTMENU_CONSOLE_STYLE, Menu.NONE, R.string.menu_console_style);
-        menu.add(Menu.NONE, CONTEXTMENU_TOGGLE_BACK_IS_ESCAPE, Menu.NONE, R.string.menu_toggle_back_is_escape).setCheckable(true).setChecked(mSettings.isBackEscape());
         menu.add(Menu.NONE, CONTEXTMENU_TOGGLE_IGNORE_BELL, Menu.NONE, R.string.menu_toggle_ignore_bell).setCheckable(true).setChecked(mSettings.isBellIgnored());
     }
 
@@ -405,14 +403,6 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
                 if (session != null) {
                     session.reset(true);
                     showToast(getResources().getString(R.string.reset_toast_notification), true);
-                }
-                return true;
-            }
-            case CONTEXTMENU_TOGGLE_BACK_IS_ESCAPE: {
-                if (mSettings.isBackEscape()) {
-                    mSettings.setBackIsEscape(this, false);
-                } else {
-                    mSettings.setBackIsEscape(this, true);
                 }
                 return true;
             }
