@@ -926,6 +926,9 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         // Resource path with optional query string.
         regex_sb.append("(?:/[a-zA-Z0-9:@%\\-._~!$&()*+,;=?/]*)?");
 
+        // Fragment.
+        regex_sb.append("(?:#[a-zA-Z0-9:@%\\-._~!$&()*+,;=?/]*)?");
+
         // End second matching group.
         regex_sb.append(")");
 
