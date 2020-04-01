@@ -338,8 +338,9 @@ public final class ExtraKeysView extends GridLayout {
         if (keyCode > 0) {
             terminalView.onKeyDown(keyCode, new KeyEvent(KeyEvent.ACTION_UP, keyCode));
         } else {
-            TerminalSession session = terminalView.getCurrentSession();
-            if (session != null) session.write(chars);
+            keyName.codePoints().forEach(codePoint -> {
+                terminalView.inputCodePoint(codePoint, false, false);
+            });
         }
     }
 }
